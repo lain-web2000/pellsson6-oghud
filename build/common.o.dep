@@ -1,0 +1,4 @@
+build/common.o:	common/common.asm inc/shared.inc inc/mario.inc inc/macros.inc inc/text.inc inc/utils.inc inc/div10.inc common/sound.asm common/sound-ll.asm common/game.asm common/pausemenu.asm common/practice.asm inc/org.inc inc/lost.inc inc/wram.inc
+
+common/common.asm inc/shared.inc inc/mario.inc inc/macros.inc inc/text.inc inc/utils.inc inc/div10.inc common/sound.asm common/sound-ll.asm common/game.asm common/pausemenu.asm common/practice.asm inc/org.inc inc/lost.inc inc/wram.inc:
+

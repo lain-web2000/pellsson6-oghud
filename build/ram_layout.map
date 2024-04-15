@@ -1,0 +1,435 @@
+ca65 V2.19 - Git b993d8833
+Main file   : wram/ram_layout.asm
+Current file: wram/ram_layout.asm
+
+000000r 1               		.org $6000
+006000  1               		.include "text.inc"
+006000  2               .ifndef __TEXT_INC_DEF__
+006000  2               .define __TEXT_INC_DEF__
+006000  2               
+006000  2               .charmap '0', 0
+006000  2               .charmap '1', 1
+006000  2               .charmap '2', 2
+006000  2               .charmap '3', 3
+006000  2               .charmap '4', 4
+006000  2               .charmap '5', 5
+006000  2               .charmap '6', 6
+006000  2               .charmap '7', 7
+006000  2               .charmap '8', 8
+006000  2               .charmap '9', 9
+006000  2               .charmap 'A', $0A
+006000  2               .charmap 'B', $0B
+006000  2               .charmap 'C', $0C
+006000  2               .charmap 'D', $0D
+006000  2               .charmap 'E', $0E
+006000  2               .charmap 'F', $0F
+006000  2               .charmap 'G', $10
+006000  2               .charmap 'H', $11
+006000  2               .charmap 'I', $12
+006000  2               .charmap 'J', $13
+006000  2               .charmap 'K', $14
+006000  2               .charmap 'L', $15
+006000  2               .charmap 'M', $16
+006000  2               .charmap 'N', $17
+006000  2               .charmap 'O', $18
+006000  2               .charmap 'P', $19
+006000  2               .charmap 'Q', $1a
+006000  2               .charmap 'R', $1b
+006000  2               .charmap 'S', $1c
+006000  2               .charmap 'T', $1d
+006000  2               .charmap 'U', $1e
+006000  2               .charmap 'V', $1f
+006000  2               .charmap 'W', $20
+006000  2               .charmap 'X', $21
+006000  2               .charmap 'Y', $22
+006000  2               .charmap 'Z', $23
+006000  2               .charmap '-', $28
+006000  2               .charmap '!', $2b
+006000  2               .charmap '*', $29
+006000  2               .charmap ' ', $24
+006000  2               .charmap '.', $2a
+006000  2               .charmap ':', $28
+006000  2               
+006000  2               .macro text_block at, txt
+006000  2               	.byte at >> 8
+006000  2               	.byte at & $ff
+006000  2               	.byte .strlen(txt)
+006000  2               	.byte txt
+006000  2               .endmacro
+006000  2               
+006000  2               .macro inline_write_block name
+006000  2               	.local @more_bytes
+006000  2               	ldx #0
+006000  2               	ldy VRAM_Buffer1_Offset
+006000  2               @more_bytes:
+006000  2               	lda name, x
+006000  2               	sta VRAM_Buffer1, y
+006000  2               	inx
+006000  2               	iny
+006000  2               	cmp #0
+006000  2               	bne @more_bytes
+006000  2               	dey
+006000  2               	sty VRAM_Buffer1_Offset
+006000  2               .endmacro
+006000  2               
+006000  2               .endif
+006000  2               
+006000  2               
+006000  2               
+006000  2               
+006000  1               
+006000  1               WRAM_StartAddress:
+006000  1               WRAM_Magic:
+006000  1  00 00 00 00  	.res $04, $00
+006004  1               
+006004  1               WRAM_MenuIndex:
+006004  1  00           	.byte $00
+006005  1               WRAM_PracticeFlags:
+006005  1  00           	.byte $00
+006006  1               WRAM_CharSet:
+006006  1  00           	.byte $00
+006007  1               WRAM_DelaySaveFrames:
+006007  1  00           	.byte $00
+006008  1               WRAM_DelayUserFrames:
+006008  1  00           	.byte $00
+006009  1               WRAM_SaveFramesLeft:
+006009  1  00           	.byte $00
+00600A  1               WRAM_UserFramesLeft:
+00600A  1  00           	.byte $00
+00600B  1               WRAM_SaveStateBank:
+00600B  1  00           	.byte $00
+00600C  1               WRAM_DisableMusic:
+00600C  1  00           	.byte $00
+00600D  1               WRAM_DisableSound:
+00600D  1  00           	.byte $00
+00600E  1               WRAM_SaveButtons:
+00600E  1  00           	.byte $00
+00600F  1               WRAM_LoadButtons:
+00600F  1  00           	.byte $00
+006010  1               WRAM_TitleButtons:
+006010  1  00           	.byte $00
+006011  1               WRAM_RestartButtons:
+006011  1  00           	.byte $00
+006012  1               WRAM_SlowMotion:
+006012  1  00           	.byte $00
+006013  1               WRAM_SlowMotionLeft:
+006013  1  00           	.byte $00
+006014  1               
+006014  1               WRAM_ToSaveFile:
+006014  1               WRAM_LoadedLevel:
+006014  1  00           	.byte $00
+006015  1               WRAM_LoadedWorld:
+006015  1  00           	.byte $00
+006016  1               WRAM_LevelAreaPointer:
+006016  1  00           	.byte $00
+006017  1               WRAM_LevelAreaType:
+006017  1  00           	.byte $00
+006018  1               WRAM_LevelIntervalTimerControl:
+006018  1  00           	.byte $00
+006019  1               WRAM_LevelFrameCounter:
+006019  1  00           	.byte $00
+00601A  1               WRAM_LevelPlayerStatus:
+00601A  1  00           	.byte $00
+00601B  1               WRAM_LevelPlayerSize:
+00601B  1  00           	.byte $00
+00601C  1               WRAM_EntrySockTimer:
+00601C  1  00           	.byte $00
+00601D  1               WRAM_LevelRandomData:
+00601D  1  00 00 00 00  	.res $07, $00
+006021  1  00 00 00     
+006024  1               WRAM_LevelFrameRuleData:
+006024  1  00 00 00 00  	.res $04, $00
+006028  1               WRAM_EnemyData:
+006028  1  00 00 00 00  	.res $80-(WRAM_EnemyData-WRAM_ToSaveFile), $00
+00602C  1  00 00 00 00  
+006030  1  00 00 00 00  
+006094  1               WRAM_LevelData:
+006094  1  00 00 00 00  	.res $100, $00
+006098  1  00 00 00 00  
+00609C  1  00 00 00 00  
+006194  1               WRAM_IsContraMode:
+006194  1  00 00        	.word 0
+006196  1               
+006196  1               WRAM_Temp:
+006196  1  00 00 00 00  	.res $64, $00
+00619A  1  00 00 00 00  
+00619E  1  00 00 00 00  
+0061FA  1               
+0061FA  1               ; Persistent
+0061FA  1               
+0061FA  1               WRAM_OrgUser0:
+0061FA  1  00 00        	.word 0
+0061FC  1               WRAM_OrgUser1:
+0061FC  1  00 00        	.word 0
+0061FE  1               WRAM_LostUser0:
+0061FE  1  00 00        	.word 0
+006200  1               WRAM_LostUser1:
+006200  1  00 00        	.word 0
+006202  1               
+006202  1               WRAM_OrgRules:
+006202  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 1
+006206  1  00 00 00 00  
+00620A  1  00 00 00 00  
+006212  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 2
+006216  1  00 00 00 00  
+00621A  1  00 00 00 00  
+006222  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 3
+006226  1  00 00 00 00  
+00622A  1  00 00 00 00  
+006232  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 4
+006236  1  00 00 00 00  
+00623A  1  00 00 00 00  
+006242  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 5
+006246  1  00 00 00 00  
+00624A  1  00 00 00 00  
+006252  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 6
+006256  1  00 00 00 00  
+00625A  1  00 00 00 00  
+006262  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 7
+006266  1  00 00 00 00  
+00626A  1  00 00 00 00  
+006272  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 8
+006276  1  00 00 00 00  
+00627A  1  00 00 00 00  
+006282  1               
+006282  1               WRAM_LostRules:
+006282  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 1
+006286  1  00 00 00 00  
+00628A  1  00 00 00 00  
+006292  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 2
+006296  1  00 00 00 00  
+00629A  1  00 00 00 00  
+0062A2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 3
+0062A6  1  00 00 00 00  
+0062AA  1  00 00 00 00  
+0062B2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 4
+0062B6  1  00 00 00 00  
+0062BA  1  00 00 00 00  
+0062C2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 5
+0062C6  1  00 00 00 00  
+0062CA  1  00 00 00 00  
+0062D2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 6
+0062D6  1  00 00 00 00  
+0062DA  1  00 00 00 00  
+0062E2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 7
+0062E6  1  00 00 00 00  
+0062EA  1  00 00 00 00  
+0062F2  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 8
+0062F6  1  00 00 00 00  
+0062FA  1  00 00 00 00  
+006302  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World 9
+006306  1  00 00 00 00  
+00630A  1  00 00 00 00  
+006312  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World A
+006316  1  00 00 00 00  
+00631A  1  00 00 00 00  
+006322  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World B
+006326  1  00 00 00 00  
+00632A  1  00 00 00 00  
+006332  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World C
+006336  1  00 00 00 00  
+00633A  1  00 00 00 00  
+006342  1  00 00 00 00  	.dword 0, 0, 0, 0 ; World D
+006346  1  00 00 00 00  
+00634A  1  00 00 00 00  
+006352  1               
+006352  1               
+006352  1               WRAM_OrgTimes:
+006352  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 1
+006356  1  00 00 00 00  
+00635A  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 2
+00635E  1  00 00 00 00  
+006362  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 3
+006366  1  00 00 00 00  
+00636A  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 4
+00636E  1  00 00 00 00  
+006372  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 5
+006376  1  00 00 00 00  
+00637A  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 6
+00637E  1  00 00 00 00  
+006382  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 7
+006386  1  00 00 00 00  
+00638A  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 8
+00638E  1  00 00 00 00  
+006392  1               WRAM_OrgTimesEnd:
+006392  1               
+006392  1               WRAM_LostTimes:
+006392  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 1
+006396  1  00 00 00 00  
+00639A  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 2
+00639E  1  00 00 00 00  
+0063A2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 3
+0063A6  1  00 00 00 00  
+0063AA  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 4
+0063AE  1  00 00 00 00  
+0063B2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 5
+0063B6  1  00 00 00 00  
+0063BA  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 6
+0063BE  1  00 00 00 00  
+0063C2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 7
+0063C6  1  00 00 00 00  
+0063CA  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 8
+0063CE  1  00 00 00 00  
+0063D2  1               WRAM_LostTimesEnd:
+0063D2  1               WRAM_ExtTimes:
+0063D2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World 9
+0063D6  1  00 00 00 00  
+0063DA  1  00 00 00 00  	.word 0, 0, 0, 0 ; World A
+0063DE  1  00 00 00 00  
+0063E2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World B
+0063E6  1  00 00 00 00  
+0063EA  1  00 00 00 00  	.word 0, 0, 0, 0 ; World C
+0063EE  1  00 00 00 00  
+0063F2  1  00 00 00 00  	.word 0, 0, 0, 0 ; World D
+0063F6  1  00 00 00 00  
+0063FA  1               WRAM_ExtTimesEnd:
+0063FA  1               
+0063FA  1               WRAM_Timer:
+0063FA  1  00 00        	.word 0
+0063FC  1               
+0063FC  1               WRAM_PrettyTime:
+0063FC  1               WRAM_PrettyTimeMin:
+0063FC  1  00           	.byte 0
+0063FD  1               WRAM_PrettyTimeSec:
+0063FD  1  00           	.byte 0
+0063FE  1               WRAM_PrettyTimeFrac:
+0063FE  1  00           	.byte 0
+0063FF  1               
+0063FF  1               ;
+0063FF  1               ; Number of stars collected
+0063FF  1               ;
+0063FF  1               WRAM_LostStart:
+0063FF  1               
+0063FF  1               WRAM_LeafY:
+0063FF  1  30           		.byte $30
+006400  1  70           		.byte $70
+006401  1  B8           		.byte $B8
+006402  1  50           		.byte $50
+006403  1  98           		.byte $98
+006404  1  30           		.byte $30
+006405  1  70           		.byte $70
+006406  1  B8           		.byte $B8
+006407  1  50           		.byte $50
+006408  1  98           		.byte $98
+006409  1  30           		.byte $30
+00640A  1  70           		.byte $70
+00640B  1               WRAM_LeafX:
+00640B  1  30           		.byte $30
+00640C  1  30           		.byte $30
+00640D  1  30           		.byte $30
+00640E  1  60           		.byte $60
+00640F  1  60           		.byte $60
+006410  1  A0           		.byte $A0
+006411  1  A0           		.byte $A0
+006412  1  A0           		.byte $A0
+006413  1  D0           		.byte $D0
+006414  1  D0           		.byte $D0
+006415  1  D0           		.byte $D0
+006416  1  60           		.byte $60
+006417  1               
+006417  1               ;
+006417  1               ; Player palette colors
+006417  1               ;
+006417  1               WRAM_PlayerColors:
+006417  1  22 16 27 18  		.byte $22, $16, $27, $18 ; Mario
+00641B  1  22 37 27 16  		.byte $22, $37, $27, $16 ; Luigi (REMOVE ME)
+00641F  1               
+00641F  1               WRAM_JumpMForceData:
+00641F  1  20 20 1E 28  		.byte $20, $20, $1E, $28, $28, $0D, $04
+006423  1  28 0D 04     
+006426  1               WRAM_FallMForceData:
+006426  1  70 70 60 90  		.byte $70, $70, $60, $90, $90, $0A, $09
+00642A  1  90 0A 09     
+00642D  1               WRAM_FrictionData:
+00642D  1  E4 98 D0     		.byte $E4, $98, $D0
+006430  1               
+006430  1               WRAM_EnemyAttributeData:
+006430  1  01 02 03 02  		.byte $01, $02, $03, $02
+006434  1  22 01 03 03  		.byte $22, $01, $03, $03
+006438  1  03 01 01 02  		.byte $03, $01, $01, $02
+00643C  1  02           		.byte $02
+00643D  1               WRAM_PiranhaPlantAttributeData:
+00643D  1  21           		.byte $21
+00643E  1  01 02 01 01  		.byte $01, $02, $01, $01
+006442  1  02 FF 02 02  		.byte $02, $FF, $02, $02
+006446  1  01 01        		.byte $01, $01
+006448  1               WRAM_UnknownAttributeData0:
+006448  1  02           		.byte $02
+006449  1               WRAM_UnknownAttributeData1:
+006449  1  02           		.byte $02
+00644A  1               WRAM_UnknownAttributeData2:
+00644A  1  02           		.byte $02
+00644B  1               ;
+00644B  1               ; Draw buffer for title screen with mushroom
+00644B  1               ;
+00644B  1               WRAM_MushroomSelection:
+00644B  1  22           		.byte $22
+00644C  1  4B           		.byte $4B
+00644D  1  83           		.byte $83
+00644E  1               WRAM_SelectMario:
+00644E  1  CE           		.byte $CE
+00644F  1  24           		.byte $24
+006450  1               WRAM_SelectLuigi:
+006450  1  24           		.byte $24
+006451  1  00           		.byte $00
+006452  1               
+006452  1               ;
+006452  1               ; Originally patched the immediate byte of the
+006452  1               ; cmp instruction, but that was too much of a hack, so
+006452  1               ; now we just store it here directly
+006452  1               ;
+006452  1               WRAM_PiranhaPlantDist:
+006452  1  21           		.byte $21
+006453  1               ;
+006453  1               ; Halway stuff
+006453  1               ;
+006453  1               WRAM_HalfwayPageNybbles:
+006453  1  66 60        		.byte $66, $60
+006455  1  88 60        		.byte $88, $60
+006457  1  66 70        		.byte $66, $70
+006459  1  77 60        		.byte $77, $60
+00645B  1  D6 00        		.byte $D6, $00
+00645D  1  77 80        		.byte $77, $80
+00645F  1  70 B0        		.byte $70, $B0
+006461  1  00 00        		.byte $00, $00
+006463  1  00 00        		.byte $00, $00
+006465  1               
+006465  1               WRAM_LostEnd:
+006465  1               
+006465  1               WRAM_SaveLost:
+006465  1  00 00 00 00  		.res WRAM_LostEnd - WRAM_LostStart, $00
+006469  1  00 00 00 00  
+00646D  1  00 00 00 00  
+0064CB  1               
+0064CB  1               WRAM_SaveRAM:
+0064CB  1  00 00 00 00  		.res $800, $00
+0064CF  1  00 00 00 00  
+0064D3  1  00 00 00 00  
+006CCB  1               
+006CCB  1               WRAM_SaveWRAM:
+006CCB  1  00 00 00 00  		.res $80, $00
+006CCF  1  00 00 00 00  
+006CD3  1  00 00 00 00  
+006D4B  1               WRAM_SaveLevel:
+006D4B  1  00 00 00 00  		.res $100, $00
+006D4F  1  00 00 00 00  
+006D53  1  00 00 00 00  
+006E4B  1               
+006E4B  1               WRAM_SaveNT:
+006E4B  1  00 00 00 00  		.res $800, $00
+006E4F  1  00 00 00 00  
+006E53  1  00 00 00 00  
+00764B  1               
+00764B  1               WRAM_SavePAL:
+00764B  1  00 00 00 00  		.res $20, $00
+00764F  1  00 00 00 00  
+007653  1  00 00 00 00  
+00766B  1               
+00766B  1               WRAM_StoredInputs:
+00766B  1  00 00 00 00          .res $0b, $00
+00766F  1  00 00 00 00  
+007673  1  00 00 00     
+007676  1               
+007676  1               FrameRuleData:
+007676  1  00 00 00 00  		.res $04, $00
+007676  1               

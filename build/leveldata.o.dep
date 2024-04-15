@@ -1,0 +1,4 @@
+build/leveldata.o:	lost/leveldata.asm inc/lost.inc inc/mario.inc inc/shared.inc inc/macros.inc inc/wram.inc
+
+lost/leveldata.asm inc/lost.inc inc/mario.inc inc/shared.inc inc/macros.inc inc/wram.inc:
+

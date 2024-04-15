@@ -1,0 +1,4 @@
+build/dummy.o:	dummy.asm inc/mario.inc inc/shared.inc inc/macros.inc inc/text.inc
+
+dummy.asm inc/mario.inc inc/shared.inc inc/macros.inc inc/text.inc:
+

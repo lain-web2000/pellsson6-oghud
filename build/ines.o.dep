@@ -1,0 +1,4 @@
+build/ines.o:	common/ines.asm
+
+common/ines.asm:
+

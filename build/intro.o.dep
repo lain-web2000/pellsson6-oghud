@@ -1,0 +1,4 @@
+build/intro.o:	intro/intro.asm inc/mario.inc inc/shared.inc inc/macros.inc inc/wram.inc inc/text.inc intro/intro.inc intro/nt.asm intro/settings.asm intro/records.asm nss/records_attr.bin intro/smlsound.asm intro/faxsound.asm
+
+intro/intro.asm inc/mario.inc inc/shared.inc inc/macros.inc inc/wram.inc inc/text.inc intro/intro.inc intro/nt.asm intro/settings.asm intro/records.asm nss/records_attr.bin intro/smlsound.asm intro/faxsound.asm:
+

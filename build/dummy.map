@@ -1,0 +1,1222 @@
+ca65 V2.19 - Git b993d8833
+Main file   : dummy.asm
+Current file: dummy.asm
+
+000000r 1               	.include "mario.inc"
+000000r 2               PPU_CTRL_REG1         = $2000
+000000r 2               PPU_CTRL_REG2         = $2001
+000000r 2               PPU_STATUS            = $2002
+000000r 2               PPU_SPR_ADDR          = $2003
+000000r 2               PPU_SPR_DATA          = $2004
+000000r 2               PPU_SCROLL_REG        = $2005
+000000r 2               PPU_ADDRESS           = $2006
+000000r 2               PPU_DATA              = $2007
+000000r 2               
+000000r 2               SND_REGISTER          = $4000
+000000r 2               SND_SQUARE1_REG       = $4000
+000000r 2               SND_SQUARE2_REG       = $4004
+000000r 2               SND_TRIANGLE_REG      = $4008
+000000r 2               SND_NOISE_REG         = $400c
+000000r 2               SND_DELTA_REG         = $4010
+000000r 2               SND_MASTERCTRL_REG    = $4015
+000000r 2               SND_VOLENV_REG        = $4080
+000000r 2               SND_FDS0_REG          = $4040
+000000r 2               SND_FDS1_REG          = $4041
+000000r 2               SND_PULSE_4002_REG    = $4002
+000000r 2               SND_PULSE_4003_REG    = $4003
+000000r 2               SND_PULSE_4004_REG    = $4004
+000000r 2               SND_PULSE_4005_REG    = $4005
+000000r 2               SND_PULSE_4006_REG    = $4006
+000000r 2               SND_TRIANGLE_400A_REG = $400A
+000000r 2               SND_TRIANGLE_400B_REG = $400B
+000000r 2               SND_NOISE_400E_REG    = $400E
+000000r 2               SND_NOISE_400F_REG    = $400F
+000000r 2               
+000000r 2               SPR_DMA               = $4014
+000000r 2               JOYPAD_PORT           = $4016
+000000r 2               JOYPAD_PORT1          = $4016
+000000r 2               JOYPAD_PORT2          = $4017
+000000r 2               
+000000r 2               ; GAME SPECIFIC DEFINES
+000000r 2               
+000000r 2               ObjectOffset          = $08
+000000r 2               
+000000r 2               FrameCounter          = $09
+000000r 2               
+000000r 2               SavedJoypadBits       = $06fc
+000000r 2               SavedJoypad1Bits      = $06fc
+000000r 2               SavedJoypad2Bits      = $06fd
+000000r 2               JoypadBitMask         = $074a
+000000r 2               JoypadOverride        = $0758
+000000r 2               
+000000r 2               A_B_Buttons           = $0a
+000000r 2               PreviousA_B_Buttons   = $0d
+000000r 2               Up_Down_Buttons       = $0b
+000000r 2               Left_Right_Buttons    = $0c
+000000r 2               
+000000r 2               GameEngineSubroutine  = $0e
+000000r 2               
+000000r 2               Mirror_PPU_CTRL_REG1  = $0778
+000000r 2               Mirror_PPU_CTRL_REG2  = $0779
+000000r 2               
+000000r 2               OperMode              = $0770
+000000r 2               OperMode_Task         = $0772
+000000r 2               ScreenRoutineTask     = $073c
+000000r 2               
+000000r 2               GamePauseStatus       = $0776
+000000r 2               GamePauseTimer        = $0777
+000000r 2               
+000000r 2               DemoAction            = $0717
+000000r 2               DemoActionTimer       = $0718
+000000r 2               
+000000r 2               TimerControl          = $0747
+000000r 2               IntervalTimerControl  = $077f
+000000r 2               
+000000r 2               Timers                = $0780
+000000r 2               SelectTimer           = $0780
+000000r 2               PlayerAnimTimer       = $0781
+000000r 2               JumpSwimTimer         = $0782
+000000r 2               RunningTimer          = $0783
+000000r 2               BlockBounceTimer      = $0784
+000000r 2               SideCollisionTimer    = $0785
+000000r 2               JumpspringTimer       = $0786
+000000r 2               GameTimerCtrlTimer    = $0787
+000000r 2               ClimbSideTimer        = $0789
+000000r 2               EnemyFrameTimer       = $078a
+000000r 2               FrenzyEnemyTimer      = $078f
+000000r 2               BowserFireBreathTimer = $0790
+000000r 2               StompTimer            = $0791
+000000r 2               AirBubbleTimer        = $0792
+000000r 2               ScrollIntervalTimer   = $0795
+000000r 2               EnemyIntervalTimer    = $0796
+000000r 2               BrickCoinTimer        = $079d
+000000r 2               InjuryTimer           = $079e
+000000r 2               StarInvincibleTimer   = $079f
+000000r 2               ScreenTimer           = $07a0
+000000r 2               WorldEndTimer         = $07a1
+000000r 2               DemoTimer             = $07a2
+000000r 2               
+000000r 2               Sprite_Data           = $0200
+000000r 2               
+000000r 2               Sprite_Y_Position     = $0200
+000000r 2               Sprite_Tilenumber     = $0201
+000000r 2               Sprite_Attributes     = $0202
+000000r 2               Sprite_X_Position     = $0203
+000000r 2               
+000000r 2               ScreenEdge_PageLoc    = $071a
+000000r 2               ScreenEdge_X_Pos      = $071c
+000000r 2               ScreenLeft_PageLoc    = $071a
+000000r 2               ScreenRight_PageLoc   = $071b
+000000r 2               ScreenLeft_X_Pos      = $071c
+000000r 2               ScreenRight_X_Pos     = $071d
+000000r 2               
+000000r 2               PlayerFacingDir       = $33
+000000r 2               DestinationPageLoc    = $34
+000000r 2               VictoryWalkControl    = $35
+000000r 2               ScrollFractional      = $0768
+000000r 2               PrimaryMsgCounter     = $0719
+000000r 2               SecondaryMsgCounter   = $0749
+000000r 2               
+000000r 2               HorizontalScroll      = $073f
+000000r 2               VerticalScroll        = $0740
+000000r 2               ScrollLock            = $0723
+000000r 2               ScrollThirtyTwo       = $073d
+000000r 2               Player_X_Scroll       = $06ff
+000000r 2               Player_Pos_ForScroll  = $0755
+000000r 2               ScrollAmount          = $0775
+000000r 2               
+000000r 2               AreaData              = $e7
+000000r 2               AreaDataLow           = $e7
+000000r 2               AreaDataHigh          = $e8
+000000r 2               EnemyData             = $e9
+000000r 2               EnemyDataLow          = $e9
+000000r 2               EnemyDataHigh         = $ea
+000000r 2               
+000000r 2               AreaParserTaskNum     = $071f
+000000r 2               ColumnSets            = $071e
+000000r 2               CurrentPageLoc        = $0725
+000000r 2               CurrentColumnPos      = $0726
+000000r 2               BackloadingFlag       = $0728
+000000r 2               BehindAreaParserFlag  = $0729
+000000r 2               AreaObjectPageLoc     = $072a
+000000r 2               AreaObjectPageSel     = $072b
+000000r 2               AreaDataOffset        = $072c
+000000r 2               AreaObjOffsetBuffer   = $072d
+000000r 2               AreaObjectLength      = $0730
+000000r 2               StaircaseControl      = $0734
+000000r 2               AreaObjectHeight      = $0735
+000000r 2               MushroomLedgeHalfLen  = $0736
+000000r 2               EnemyDataOffset       = $0739
+000000r 2               EnemyObjectPageLoc    = $073a
+000000r 2               EnemyObjectPageSel    = $073b
+000000r 2               MetatileBuffer        = $06a1
+000000r 2               BlockBufferColumnPos  = $06a0
+000000r 2               CurrentNTAddr_Low     = $0721
+000000r 2               CurrentNTAddr_High    = $0720
+000000r 2               AttributeBuffer       = $03f9
+000000r 2               
+000000r 2               LoopCommand           = $0745
+000000r 2               
+000000r 2               DisplayDigits         = $07d7
+000000r 2               TopScoreDisplay       = $07d7
+000000r 2               ScoreAndCoinDisplay   = $07dd
+000000r 2               PlayerScoreDisplay    = $07dd
+000000r 2               GameTimerDisplay      = $07f8
+000000r 2               DigitModifier         = $0134
+000000r 2               
+000000r 2               VerticalFlipFlag      = $0109
+000000r 2               FloateyNum_Control    = $0110
+000000r 2               ShellChainCounter     = $0125
+000000r 2               FloateyNum_Timer      = $012c
+000000r 2               FloateyNum_X_Pos      = $0117
+000000r 2               FloateyNum_Y_Pos      = $011e
+000000r 2               FlagpoleFNum_Y_Pos    = $010d
+000000r 2               FlagpoleFNum_YMFDummy = $010e
+000000r 2               FlagpoleScore         = $010f
+000000r 2               FlagpoleCollisionYPos = $070f
+000000r 2               StompChainCounter     = $0484
+000000r 2               
+000000r 2               VRAM_Buffer1_Offset   = $0300
+000000r 2               VRAM_Buffer1          = $0301
+000000r 2               VRAM_Buffer2_Offset   = $0340
+000000r 2               VRAM_Buffer2          = $0341
+000000r 2               VRAM_Buffer_AddrCtrl  = $0773
+000000r 2               Sprite0HitDetectFlag  = $0722
+000000r 2               IRQUpdateFlag         = $0722
+000000r 2               IRQAckFlag            = $077b
+000000r 2               DisableScreenFlag     = $0774
+000000r 2               DisableIntermediate   = $0769
+000000r 2               ColorRotateOffset     = $06d4
+000000r 2               
+000000r 2               TerrainControl        = $0727
+000000r 2               AreaStyle             = $0733
+000000r 2               ForegroundScenery     = $0741
+000000r 2               BackgroundScenery     = $0742
+000000r 2               CloudTypeOverride     = $0743
+000000r 2               BackgroundColorCtrl   = $0744
+000000r 2               AreaType              = $074e
+000000r 2               AreaAddrsLOffset      = $074f
+000000r 2               AreaPointer           = $0750
+000000r 2               
+000000r 2               PlayerEntranceCtrl    = $0710
+000000r 2               GameTimerSetting      = $0715
+000000r 2               AltEntranceControl    = $0752
+000000r 2               EntrancePage          = $0751
+000000r 2               NumberOfPlayers       = $077a
+000000r 2               UseNtBase2400 		  = $077a
+000000r 2               WarpZoneControl       = $06d6
+000000r 2               ChangeAreaTimer       = $06de
+000000r 2               
+000000r 2               MultiLoopCorrectCntr  = $06d9
+000000r 2               MultiLoopPassCntr     = $06da
+000000r 2               
+000000r 2               FetchNewGameTimerFlag = $0757
+000000r 2               GameTimerExpiredFlag  = $0759
+000000r 2               
+000000r 2               PrimaryHardMode       = $076a
+000000r 2               SecondaryHardMode     = $06cc
+000000r 2               WorldSelectNumber     = $076b
+000000r 2               WorldSelectEnableFlag = $07fc
+000000r 2               ContinueWorld         = $07fd
+000000r 2               
+000000r 2               .define IsPlayingLuigi CurrentPlayer
+000000r 2               
+000000r 2               CurrentPlayer         = $0753
+000000r 2               PlayerSize            = $0754
+000000r 2               PlayerStatus          = $0756
+000000r 2               
+000000r 2               ;OnscreenPlayerInfo    = $075a
+000000r 2               ;NumberofLives         = $075a ;used by current player
+000000r 2               HalfwayPage           = $075b
+000000r 2               LevelNumber           = $075c ;the actual dash number
+000000r 2               Hidden1UpFlag         = $075d
+000000r 2               CoinTally             = $075e
+000000r 2               WorldNumber           = $075f
+000000r 2               AreaNumber            = $0760 ;internal number used to find areas
+000000r 2               
+000000r 2               CoinTallyFor1Ups      = $0748
+000000r 2               
+000000r 2               OffscreenPlayerInfo   = $0761
+000000r 2               OffScr_NumberofLives  = $0761 ;used by offscreen player
+000000r 2               OffScr_HalfwayPage    = $0762
+000000r 2               OffScr_LevelNumber    = $0763
+000000r 2               OffScr_Hidden1UpFlag  = $0764
+000000r 2               OffScr_CoinTally      = $0765
+000000r 2               OffScr_WorldNumber    = $0766
+000000r 2               OffScr_AreaNumber     = $0767
+000000r 2               
+000000r 2               BalPlatformAlignment  = $03a0
+000000r 2               Platform_X_Scroll     = $03a1
+000000r 2               PlatformCollisionFlag = $03a2
+000000r 2               YPlatformTopYPos      = $0401
+000000r 2               YPlatformCenterYPos   = $58
+000000r 2               
+000000r 2               BrickCoinTimerFlag    = $06bc
+000000r 2               StarFlagTaskControl   = $0746
+000000r 2               
+000000r 2               PseudoRandomBitReg    = $07a7
+000000r 2               
+000000r 2               SprShuffleAmtOffset   = $06e0
+000000r 2               SprShuffleAmt         = $06e1
+000000r 2               SprDataOffset         = $06e4
+000000r 2               Player_SprDataOffset  = $06e4
+000000r 2               Enemy_SprDataOffset   = $06e5
+000000r 2               Block_SprDataOffset   = $06ec
+000000r 2               Alt_SprDataOffset     = $06ec
+000000r 2               Bubble_SprDataOffset  = $06ee
+000000r 2               FBall_SprDataOffset   = $06f1
+000000r 2               Misc_SprDataOffset    = $06f3
+000000r 2               SprDataOffset_Ctrl    = $03ee
+000000r 2               
+000000r 2               Player_State          = $1d
+000000r 2               Enemy_State           = $1e
+000000r 2               Fireball_State        = $24
+000000r 2               Block_State           = $26
+000000r 2               Misc_State            = $2a
+000000r 2               
+000000r 2               Player_MovingDir      = $45
+000000r 2               Enemy_MovingDir       = $46
+000000r 2               
+000000r 2               SprObject_X_Speed     = $57
+000000r 2               Player_X_Speed        = $57
+000000r 2               Enemy_X_Speed         = $58
+000000r 2               Fireball_X_Speed      = $5e
+000000r 2               Block_X_Speed         = $60
+000000r 2               Misc_X_Speed          = $64
+000000r 2               
+000000r 2               Jumpspring_FixedYPos  = $58
+000000r 2               JumpspringAnimCtrl    = $070e
+000000r 2               JumpspringForce       = $06db
+000000r 2               
+000000r 2               SprObject_PageLoc     = $6d
+000000r 2               Player_PageLoc        = $6d
+000000r 2               Enemy_PageLoc         = $6e
+000000r 2               Fireball_PageLoc      = $74
+000000r 2               Block_PageLoc         = $76
+000000r 2               Misc_PageLoc          = $7a
+000000r 2               Bubble_PageLoc        = $83
+000000r 2               
+000000r 2               SprObject_X_Position  = $86
+000000r 2               Player_X_Position     = $86
+000000r 2               Enemy_X_Position      = $87
+000000r 2               Fireball_X_Position   = $8d
+000000r 2               Block_X_Position      = $8f
+000000r 2               Misc_X_Position       = $93
+000000r 2               Bubble_X_Position     = $9c
+000000r 2               
+000000r 2               SprObject_Y_Speed     = $9f
+000000r 2               Player_Y_Speed        = $9f
+000000r 2               Enemy_Y_Speed         = $a0
+000000r 2               Fireball_Y_Speed      = $a6
+000000r 2               Block_Y_Speed         = $a8
+000000r 2               Misc_Y_Speed          = $ac
+000000r 2               
+000000r 2               SprObject_Y_HighPos   = $b5
+000000r 2               Player_Y_HighPos      = $b5
+000000r 2               Enemy_Y_HighPos       = $b6
+000000r 2               Fireball_Y_HighPos    = $bc
+000000r 2               Block_Y_HighPos       = $be
+000000r 2               Misc_Y_HighPos        = $c2
+000000r 2               Bubble_Y_HighPos      = $cb
+000000r 2               
+000000r 2               SprObject_Y_Position  = $ce
+000000r 2               Player_Y_Position     = $ce
+000000r 2               Enemy_Y_Position      = $cf
+000000r 2               Fireball_Y_Position   = $d5
+000000r 2               Block_Y_Position      = $d7
+000000r 2               Misc_Y_Position       = $db
+000000r 2               Bubble_Y_Position     = $e4
+000000r 2               
+000000r 2               SprObject_Rel_XPos    = $03ad
+000000r 2               Player_Rel_XPos       = $03ad
+000000r 2               Enemy_Rel_XPos        = $03ae
+000000r 2               Fireball_Rel_XPos     = $03af
+000000r 2               Bubble_Rel_XPos       = $03b0
+000000r 2               Block_Rel_XPos        = $03b1
+000000r 2               Misc_Rel_XPos         = $03b3
+000000r 2               
+000000r 2               SprObject_Rel_YPos    = $03b8
+000000r 2               Player_Rel_YPos       = $03b8
+000000r 2               Enemy_Rel_YPos        = $03b9
+000000r 2               Fireball_Rel_YPos     = $03ba
+000000r 2               Bubble_Rel_YPos       = $03bb
+000000r 2               Block_Rel_YPos        = $03bc
+000000r 2               Misc_Rel_YPos         = $03be
+000000r 2               
+000000r 2               SprObject_SprAttrib   = $03c4
+000000r 2               Player_SprAttrib      = $03c4
+000000r 2               Enemy_SprAttrib       = $03c5
+000000r 2               
+000000r 2               SprObject_X_MoveForce = $0400
+000000r 2               Enemy_X_MoveForce     = $0401
+000000r 2               
+000000r 2               SprObject_YMF_Dummy   = $0416
+000000r 2               Player_YMF_Dummy      = $0416
+000000r 2               Enemy_YMF_Dummy       = $0417
+000000r 2               Bubble_YMF_Dummy      = $042c
+000000r 2               
+000000r 2               SprObject_Y_MoveForce = $0433
+000000r 2               Player_Y_MoveForce    = $0433
+000000r 2               Enemy_Y_MoveForce     = $0434
+000000r 2               Block_Y_MoveForce     = $043c
+000000r 2               
+000000r 2               DisableCollisionDet   = $0716
+000000r 2               Player_CollisionBits  = $0490
+000000r 2               Enemy_CollisionBits   = $0491
+000000r 2               
+000000r 2               SprObj_BoundBoxCtrl   = $0499
+000000r 2               Player_BoundBoxCtrl   = $0499
+000000r 2               Enemy_BoundBoxCtrl    = $049a
+000000r 2               Fireball_BoundBoxCtrl = $04a0
+000000r 2               Misc_BoundBoxCtrl     = $04a2
+000000r 2               
+000000r 2               EnemyFrenzyBuffer     = $06cb
+000000r 2               EnemyFrenzyQueue      = $06cd
+000000r 2               Enemy_Flag            = $0f
+000000r 2               Enemy_ID              = $16
+000000r 2               
+000000r 2               PlayerGfxOffset       = $06d5
+000000r 2               Player_XSpeedAbsolute = $0700
+000000r 2               FrictionAdderHigh     = $0701
+000000r 2               FrictionAdderLow      = $0702
+000000r 2               RunningSpeed          = $0703
+000000r 2               SwimmingFlag          = $0704
+000000r 2               Player_X_MoveForce    = $0705
+000000r 2               DiffToHaltJump        = $0706
+000000r 2               JumpOrigin_Y_HighPos  = $0707
+000000r 2               JumpOrigin_Y_Position = $0708
+000000r 2               VerticalForce         = $0709
+000000r 2               VerticalForceDown     = $070a
+000000r 2               PlayerChangeSizeFlag  = $070b
+000000r 2               PlayerAnimTimerSet    = $070c
+000000r 2               PlayerAnimCtrl        = $070d
+000000r 2               DeathMusicLoaded      = $0712
+000000r 2               FlagpoleSoundQueue    = $0713
+000000r 2               CrouchingFlag         = $0714
+000000r 2               MaximumLeftSpeed      = $0450
+000000r 2               MaximumRightSpeed     = $0456
+000000r 2               
+000000r 2               SprObject_OffscrBits  = $03d0
+000000r 2               Player_OffscreenBits  = $03d0
+000000r 2               Enemy_OffscreenBits   = $03d1
+000000r 2               FBall_OffscreenBits   = $03d2
+000000r 2               Bubble_OffscreenBits  = $03d3
+000000r 2               Block_OffscreenBits   = $03d4
+000000r 2               Misc_OffscreenBits    = $03d6
+000000r 2               EnemyOffscrBitsMasked = $03d8
+000000r 2               
+000000r 2               Cannon_Offset         = $046a
+000000r 2               Cannon_PageLoc        = $046b
+000000r 2               Cannon_X_Position     = $0471
+000000r 2               Cannon_Y_Position     = $0477
+000000r 2               Cannon_Timer          = $047d
+000000r 2               
+000000r 2               Whirlpool_Offset      = $046a
+000000r 2               Whirlpool_PageLoc     = $046b
+000000r 2               Whirlpool_LeftExtent  = $0471
+000000r 2               Whirlpool_Length      = $0477
+000000r 2               Whirlpool_Flag        = $047d
+000000r 2               
+000000r 2               VineFlagOffset        = $0398
+000000r 2               VineHeight            = $0399
+000000r 2               VineObjOffset         = $039a
+000000r 2               VineStart_Y_Position  = $039d
+000000r 2               
+000000r 2               Block_Orig_YPos       = $03e4
+000000r 2               Block_BBuf_Low        = $03e6
+000000r 2               Block_Metatile        = $03e8
+000000r 2               Block_PageLoc2        = $03ea
+000000r 2               Block_RepFlag         = $03ec
+000000r 2               Block_ResidualCounter = $03f0
+000000r 2               Block_Orig_XPos       = $03f1
+000000r 2               
+000000r 2               BoundingBox_UL_XPos   = $04ac
+000000r 2               BoundingBox_UL_YPos   = $04ad
+000000r 2               BoundingBox_DR_XPos   = $04ae
+000000r 2               BoundingBox_DR_YPos   = $04af
+000000r 2               BoundingBox_UL_Corner = $04ac
+000000r 2               BoundingBox_LR_Corner = $04ae
+000000r 2               EnemyBoundingBoxCoord = $04b0
+000000r 2               
+000000r 2               PowerUpType           = $39
+000000r 2               
+000000r 2               FireballBouncingFlag  = $3a
+000000r 2               FireballCounter       = $06ce
+000000r 2               FireballThrowingTimer = $0711
+000000r 2               
+000000r 2               HammerEnemyOffset     = $06ae
+000000r 2               JumpCoinMiscOffset    = $06b7
+000000r 2               
+000000r 2               Block_Buffer_1        = $0500
+000000r 2               Block_Buffer_2        = $05d0
+000000r 2               
+000000r 2               HammerThrowingTimer   = $03a2
+000000r 2               HammerBroJumpTimer    = $3c
+000000r 2               Misc_Collision_Flag   = $06be
+000000r 2               
+000000r 2               RedPTroopaOrigXPos    = $0401
+000000r 2               RedPTroopaCenterYPos  = $58
+000000r 2               
+000000r 2               XMovePrimaryCounter   = $a0
+000000r 2               XMoveSecondaryCounter = $58
+000000r 2               
+000000r 2               CheepCheepMoveMFlag   = $58
+000000r 2               CheepCheepOrigYPos    = $0434
+000000r 2               BitMFilter            = $06dd
+000000r 2               
+000000r 2               LakituReappearTimer   = $06d1
+000000r 2               LakituMoveSpeed       = $58
+000000r 2               LakituMoveDirection   = $a0
+000000r 2               
+000000r 2               FirebarSpinState_Low  = $58
+000000r 2               FirebarSpinState_High = $a0
+000000r 2               FirebarSpinSpeed      = $0388
+000000r 2               FirebarSpinDirection  = $34
+000000r 2               
+000000r 2               DuplicateObj_Offset   = $06cf
+000000r 2               NumberofGroupEnemies  = $06d3
+000000r 2               
+000000r 2               BlooperMoveCounter    = $a0
+000000r 2               BlooperMoveSpeed      = $58
+000000r 2               
+000000r 2               BowserBodyControls    = $0363
+000000r 2               BowserFeetCounter     = $0364
+000000r 2               BowserMovementSpeed   = $0365
+000000r 2               BowserOrigXPos        = $0366
+000000r 2               BowserFlameTimerCtrl  = $0367
+000000r 2               BowserFront_Offset    = $0368
+000000r 2               BridgeCollapseOffset  = $0369
+000000r 2               BowserGfxFlag         = $036a
+000000r 2               BowserHitPoints       = $0483
+000000r 2               MaxRangeFromOrigin    = $06dc
+000000r 2               
+000000r 2               BowserFlamePRandomOfs = $0417
+000000r 2               
+000000r 2               PiranhaPlantUpYPos    = $0417
+000000r 2               PiranhaPlantDownYPos  = $0434
+000000r 2               PiranhaPlant_Y_Speed  = $58
+000000r 2               PiranhaPlant_MoveFlag = $a0
+000000r 2               
+000000r 2               FireworksCounter      = $06d7
+000000r 2               ExplosionGfxCounter   = $58
+000000r 2               ExplosionTimerCounter = $a0
+000000r 2               
+000000r 2               ;sound related defines
+000000r 2               Squ2_NoteLenBuffer    = $07b3
+000000r 2               Squ2_NoteLenCounter   = $07b4
+000000r 2               Squ2_EnvelopeDataCtrl = $07b5
+000000r 2               Squ1_NoteLenCounter   = $07b6
+000000r 2               Squ1_EnvelopeDataCtrl = $07b7
+000000r 2               Tri_NoteLenBuffer     = $07b8
+000000r 2               Tri_NoteLenCounter    = $07b9
+000000r 2               Noise_BeatLenCounter  = $07ba
+000000r 2               Squ1_SfxLenCounter    = $07bb
+000000r 2               Squ2_SfxLenCounter    = $07bd
+000000r 2               Sfx_SecondaryCounter  = $07be
+000000r 2               Noise_SfxLenCounter   = $07bf
+000000r 2               
+000000r 2               PauseSoundQueue       = $fa
+000000r 2               Square1SoundQueue     = $ff
+000000r 2               Square2SoundQueue     = $fe
+000000r 2               NoiseSoundQueue       = $fd
+000000r 2               AreaMusicQueue        = $fb
+000000r 2               EventMusicQueue       = $fc
+000000r 2               
+000000r 2               Square1SoundBuffer    = $f1
+000000r 2               Square2SoundBuffer    = $f2
+000000r 2               NoiseSoundBuffer      = $f3
+000000r 2               AreaMusicBuffer       = $f4
+000000r 2               EventMusicBuffer      = $07b1
+000000r 2               PauseSoundBuffer      = $07b2
+000000r 2               
+000000r 2               MusicData             = $f5
+000000r 2               MusicDataLow          = $f5
+000000r 2               MusicDataHigh         = $f6
+000000r 2               MusicOffset_Square2   = $f7
+000000r 2               MusicOffset_Square1   = $f8
+000000r 2               MusicOffset_Triangle  = $f9
+000000r 2               MusicOffset_Noise     = $07b0
+000000r 2               
+000000r 2               NoteLenLookupTblOfs   = $f0
+000000r 2               DAC_Counter           = $07c0
+000000r 2               NoiseDataLoopbackOfs  = $07c1
+000000r 2               NoteLengthTblAdder    = $07c4
+000000r 2               AreaMusicBuffer_Alt   = $07c5
+000000r 2               PauseModeFlag         = $07c6
+000000r 2               GroundMusicHeaderOfs  = $07c7
+000000r 2               AltRegContentFlag     = $07ca
+000000r 2               
+000000r 2               ;-------------------------------------------------------------------------------------
+000000r 2               ;CONSTANTS
+000000r 2               
+000000r 2               ;sound effects constants
+000000r 2               Sfx_SmallJump         = %10000000
+000000r 2               Sfx_Flagpole          = %01000000
+000000r 2               Sfx_Fireball          = %00100000
+000000r 2               Sfx_PipeDown_Injury   = %00010000
+000000r 2               Sfx_EnemySmack        = %00001000
+000000r 2               Sfx_EnemyStomp        = %00000100
+000000r 2               Sfx_Bump              = %00000010
+000000r 2               Sfx_BigJump           = %00000001
+000000r 2               
+000000r 2               Sfx_BowserFall        = %10000000
+000000r 2               Sfx_ExtraLife         = %01000000
+000000r 2               Sfx_PowerUpGrab       = %00100000
+000000r 2               Sfx_TimerTick         = %00010000
+000000r 2               Sfx_Blast             = %00001000
+000000r 2               Sfx_GrowVine          = %00000100
+000000r 2               Sfx_GrowPowerUp       = %00000010
+000000r 2               Sfx_CoinGrab          = %00000001
+000000r 2               
+000000r 2               Sfx_BowserFlame       = %00000010
+000000r 2               Sfx_BrickShatter      = %00000001
+000000r 2               
+000000r 2               ;music constants
+000000r 2               Silence               = %10000000
+000000r 2               
+000000r 2               StarPowerMusic        = %01000000
+000000r 2               PipeIntroMusic        = %00100000
+000000r 2               CloudMusic            = %00010000
+000000r 2               CastleMusic           = %00001000
+000000r 2               UndergroundMusic      = %00000100
+000000r 2               WaterMusic            = %00000010
+000000r 2               GroundMusic           = %00000001
+000000r 2               
+000000r 2               TimeRunningOutMusic   = %01000000
+000000r 2               EndOfLevelMusic       = %00100000
+000000r 2               AltGameOverMusic      = %00010000
+000000r 2               EndOfCastleMusic      = %00001000
+000000r 2               VictoryMusic          = %00000100
+000000r 2               GameOverMusic         = %00000010
+000000r 2               DeathMusic            = %00000001
+000000r 2               
+000000r 2               ;enemy object constants
+000000r 2               GreenKoopa            = $00
+000000r 2               BuzzyBeetle           = $02
+000000r 2               RedKoopa              = $03
+000000r 2               HammerBro             = $05
+000000r 2               Goomba                = $06
+000000r 2               Bloober               = $07
+000000r 2               BulletBill_FrenzyVar  = $08
+000000r 2               GreyCheepCheep        = $0a
+000000r 2               RedCheepCheep         = $0b
+000000r 2               Podoboo               = $0c
+000000r 2               PiranhaPlant          = $0d
+000000r 2               GreenParatroopaJump   = $0e
+000000r 2               RedParatroopa         = $0f
+000000r 2               GreenParatroopaFly    = $10
+000000r 2               Lakitu                = $11
+000000r 2               Spiny                 = $12
+000000r 2               FlyCheepCheepFrenzy   = $14
+000000r 2               FlyingCheepCheep      = $14
+000000r 2               BowserFlame           = $15
+000000r 2               Fireworks             = $16
+000000r 2               BBill_CCheep_Frenzy   = $17
+000000r 2               Stop_Frenzy           = $18
+000000r 2               Bowser                = $2d
+000000r 2               PowerUpObject         = $2e
+000000r 2               VineObject            = $2f
+000000r 2               FlagpoleFlagObject    = $30
+000000r 2               StarFlagObject        = $31
+000000r 2               JumpspringObject      = $32
+000000r 2               BulletBill_CannonVar  = $33
+000000r 2               RetainerObject        = $35
+000000r 2               TallEnemy             = $09
+000000r 2               
+000000r 2               ;other constants
+000000r 2               World1 = 0
+000000r 2               World2 = 1
+000000r 2               World3 = 2
+000000r 2               World4 = 3
+000000r 2               World5 = 4
+000000r 2               World6 = 5
+000000r 2               World7 = 6
+000000r 2               World8 = 7
+000000r 2               Level1 = 0
+000000r 2               Level2 = 1
+000000r 2               Level3 = 2
+000000r 2               Level4 = 3
+000000r 2               
+000000r 2               WarmBootOffset        = <$07d6
+000000r 2               ColdBootOffset        = <$07fe
+000000r 2               TitleScreenDataOffset = $1ec0
+000000r 2               SoundMemory           = $07b0
+000000r 2               
+000000r 2               .define SwimTileRepOffset		PlayerGraphicsTable + $9e
+000000r 2               .define MusicHeaderOffsetData	MusicHeaderData - 1
+000000r 2               .define MHD 					MusicHeaderData
+000000r 2               
+000000r 2               A_Button              = %10000000
+000000r 2               B_Button              = %01000000
+000000r 2               Select_Button         = %00100000
+000000r 2               Start_Button          = %00010000
+000000r 2               Up_Dir                = %00001000
+000000r 2               Down_Dir              = %00000100
+000000r 2               Left_Dir              = %00000010
+000000r 2               Right_Dir             = %00000001
+000000r 2               
+000000r 2               TitleScreenModeValue  = 0
+000000r 2               GameModeValue         = 1
+000000r 2               VictoryModeValue      = 2
+000000r 2               GameOverModeValue     = 3
+000000r 2               
+000000r 1               	.include "shared.inc"
+000000r 2               BANK_SELECTED = $07ff
+000000r 2               
+000000r 2               .define PF_SockMode $01 ; Todo move elsewhere...
+000000r 2               .define PF_SaveState $02
+000000r 2               .define PF_LoadState $04
+000000r 2               .define PF_RestartLevel $08
+000000r 2               .define PF_LevelEntrySaved $10
+000000r 2               .define PF_DisablePracticeInfo $20
+000000r 2               .define PF_EnableInputDisplay $40
+000000r 2               
+000000r 2               .macro PF_SetToLevelEnd_A
+000000r 2               	lda WRAM_PracticeFlags
+000000r 2               	and #(PF_LevelEntrySaved^$FF)
+000000r 2               	sta WRAM_PracticeFlags
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro MACRO_ThrowFrameImpl
+000000r 2               ThrowFrame:
+000000r 2               		lda Mirror_PPU_CTRL_REG2
+000000r 2               		sta PPU_CTRL_REG2
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		and #$FC
+000000r 2               		sta Mirror_PPU_CTRL_REG1
+000000r 2               		sta PPU_CTRL_REG1 ; Force NT-0 (in case no button was pressed)
+000000r 2               
+000000r 2               		;
+000000r 2               		; Wait for sprite 0
+000000r 2               		;
+000000r 2               		lda Sprite0HitDetectFlag  ;check for flag here
+000000r 2               		beq @SkipSprite0
+000000r 2               		ldx #0
+000000r 2               		stx PPU_SPR_ADDR
+000000r 2               		lda Sprite0Data
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+1
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+2
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+3
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda PPU_STATUS
+000000r 2               		stx PPU_SCROLL_REG
+000000r 2               		stx PPU_SCROLL_REG
+000000r 2               @Sprite0Clr:
+000000r 2               		lda PPU_STATUS
+000000r 2               		and #$40
+000000r 2               		bne @Sprite0Clr
+000000r 2               @Sprite0Hit:
+000000r 2               		lda PPU_STATUS
+000000r 2               		and #$40
+000000r 2               		beq @Sprite0Hit
+000000r 2               		ldy #$14
+000000r 2               @HBlankDelay:
+000000r 2               		dey
+000000r 2               		bne @HBlankDelay
+000000r 2               @SkipSprite0:
+000000r 2               		lda PPU_STATUS
+000000r 2               		lda HorizontalScroll
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               		lda VerticalScroll
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               
+000000r 2               		lda ScreenLeft_PageLoc
+000000r 2               		lsr Mirror_PPU_CTRL_REG1
+000000r 2               		and #$01
+000000r 2               		ror
+000000r 2               		rol Mirror_PPU_CTRL_REG1
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               
+000000r 2               		lda WRAM_SlowMotion
+000000r 2               		cmp #4
+000000r 2               		bne @done
+000000r 2               		;
+000000r 2               		; Latch controllers.
+000000r 2               		;
+000000r 2               		ldx #1
+000000r 2               		stx $4016
+000000r 2               		dex
+000000r 2               		stx $4016
+000000r 2               		;
+000000r 2               		; Check A
+000000r 2               		;
+000000r 2               		lda $4017
+000000r 2               		lsr
+000000r 2               		bcs @done ; A pressed. Advance next frame
+000000r 2               		lda $4017 ; B
+000000r 2               		lda $4017 ; Select
+000000r 2               		lda $4017 ; Start
+000000r 2               		lsr
+000000r 2               		bcc @VBlank0
+000000r 2               		;
+000000r 2               		; Start pressed - Exit frame advance mode.
+000000r 2               		;
+000000r 2               		stx WRAM_SlowMotion
+000000r 2               		jmp @done ; Exit out of this.
+000000r 2               @VBlank0:
+000000r 2               		lda PPU_STATUS ; Wait for VBlank
+000000r 2               		bpl @VBlank0
+000000r 2               		jmp ThrowFrame
+000000r 2               @done:
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		ora #$80 ; NMI
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               		jmp Enter_SoundEngine
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro MACRO_RunSlowMo gm
+000000r 2               		dec WRAM_SlowMotionLeft
+000000r 2               		bmi @allow_frame
+000000r 2               		lda DisableScreenFlag
+000000r 2               		bne @allow_frame
+000000r 2               		lda GamePauseStatus
+000000r 2               		and #3
+000000r 2               		bne @allow_frame
+000000r 2               		ldx OperMode
+000000r 2               		dex
+000000r 2               		bne @allow_frame
+000000r 2               		lda OperMode_Task
+000000r 2               		cmp #gm
+000000r 2               		bne @allow_frame
+000000r 2               		jsr ThrowFrame
+000000r 2               		rti
+000000r 2               @allow_frame:
+000000r 2               		lda WRAM_SlowMotion
+000000r 2               		sta WRAM_SlowMotionLeft
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .define MMC5_MAKE_PRGBANK(id) ((id)*4)
+000000r 2               .define MAKE_MMC5_CHRBANK(id) ((id)*1)
+000000r 2               
+000000r 2               TITLE_INIT		= $01
+000000r 2               
+000000r 2               BANK_LOADER		= MMC5_MAKE_PRGBANK(0)
+000000r 2               BANK_CHR		= MMC5_MAKE_PRGBANK(1)
+000000r 2               BANK_ORG		= MMC5_MAKE_PRGBANK(2)
+000000r 2               BANK_COMMON		= MMC5_MAKE_PRGBANK(3)
+000000r 2               BANK_SCEN		= MMC5_MAKE_PRGBANK(4)
+000000r 2               BANK_SCEN_DATA	= MMC5_MAKE_PRGBANK(5)
+000000r 2               BANK_SMBLL		= MMC5_MAKE_PRGBANK(6)
+000000r 2               BANK_LLDATA		= MMC5_MAKE_PRGBANK(7)
+000000r 2               
+000000r 2               
+000000r 2               CHR_ORG_SPR = MAKE_MMC5_CHRBANK(0)
+000000r 2               CHR_ORG_BG = MAKE_MMC5_CHRBANK(1)
+000000r 2               CHR_ORG_BG_ALTFONT = MAKE_MMC5_CHRBANK(2)
+000000r 2               CHR_LOST_SPR = MAKE_MMC5_CHRBANK(3)
+000000r 2               CHR_LOST_BG = MAKE_MMC5_CHRBANK(4)
+000000r 2               CHR_LOST_BG_ALTFONT = MAKE_MMC5_CHRBANK(5)
+000000r 2               CHR_PEACH_SPR = MAKE_MMC5_CHRBANK(6)
+000000r 2               CHR_INTRO_BG = MAKE_MMC5_CHRBANK(7)
+000000r 2               CHR_INTRO_SPR0 = MAKE_MMC5_CHRBANK(8)
+000000r 2               
+000000r 2               CHR_SET_BANK = $A000
+000000r 2               
+000000r 2               SavedRule = $07d9
+000000r 2               RuleIndex = $0717 ; Previously DemoAction (can be changed to temp?)
+000000r 2               PowerUps = $07e3 ; Previously unused
+000000r 2               CurrentRule = $7df
+000000r 2               
+000000r 2               .ifndef RESTART_LEVEL_BUTTONS
+000000r 2               	.define RESTART_LEVEL_BUTTONS Select_Button|Up_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef RESTART_GAME_BUTTONS
+000000r 2               	.define RESTART_GAME_BUTTONS Select_Button|Down_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef SAVE_STATE_BUTTONS
+000000r 2               	.define SAVE_STATE_BUTTONS Select_Button|Right_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef LOAD_STATE_BUTTONS
+000000r 2               	.define LOAD_STATE_BUTTONS Select_Button|Left_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               
+000000r 1               	.include "macros.inc"
+000000r 2               .macro lsr_by n
+000000r 2               	.repeat n, i
+000000r 2               		lsr
+000000r 2               	.endrep
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro DoUpdateSockHash
+000000r 2               		.local @dont_render
+000000r 2               		lda WRAM_PracticeFlags
+000000r 2               		and #PF_SockMode
+000000r 2               		bne @dont_render
+000000r 2               		lda IntervalTimerControl
+000000r 2               		and #3
+000000r 2               		cmp #2
+000000r 2               		bne @dont_render
+000000r 2               		jsr Enter_ForceUpdateSockHash
+000000r 2               	@dont_render:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro practice_callgate
+000000r 2               	.res $FE00 - *, $EA
+000000r 2               
+000000r 2               	Enter_EndOfCastle:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp EndOfCastle
+000000r 2               
+000000r 2               	Enter_RenderIntermediateTime:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RenderIntermediateTime
+000000r 2               
+000000r 2               	Enter_FrameToTime:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp FrameToTime
+000000r 2               
+000000r 2               	Enter_UpdateGameTimer:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp UpdateGameTimer
+000000r 2               
+000000r 2               	Enter_InitializeWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp InitializeWRAM
+000000r 2               
+000000r 2               	Enter_SetDefaultWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp SetDefaultWRAM
+000000r 2               
+000000r 2               	Enter_FactoryResetWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp FactoryResetWRAM
+000000r 2               
+000000r 2               	Enter_RedrawSockTimer:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawSockTimer
+000000r 2               
+000000r 2               	Enter_PracticeInit:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeInit
+000000r 2               
+000000r 2               	Enter_ForceUpdateSockHash:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ForceUpdateSockHash
+000000r 2               
+000000r 2               	Enter_PracticeOnFrame:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeOnFrame
+000000r 2               
+000000r 2               	Enter_PracticeTitleMenu:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeTitleMenu
+000000r 2               
+000000r 2               	Enter_UpdateFrameRule:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp UpdateFrameRule
+000000r 2               
+000000r 2               	Enter_WritePracticeTop:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp WritePracticeTop
+000000r 2               
+000000r 2               	Enter_RedrawUserVars:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawUserVars
+000000r 2               
+000000r 2               	Enter_RedrawAll:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawAll
+000000r 2               
+000000r 2               	Enter_RedrawFrameNumbers:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawFrameNumbers
+000000r 2               
+000000r 2               	Enter_ProcessLevelLoad:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ProcessLevelLoad
+000000r 2               
+000000r 2               	Enter_LoadPhysicsData:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadPhysicsData
+000000r 2               
+000000r 2               	Enter_LoadMarioPhysics:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadMarioPhysics
+000000r 2               
+000000r 2               	Enter_LL_LoadWarpzone:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadWarpzone
+000000r 2               
+000000r 2               	Enter_LL_GetAreaDataAddrs:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp GetAreaDataAddrs
+000000r 2               
+000000r 2               	Enter_LL_LoadAreaPointer:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadAreaPointer
+000000r 2               
+000000r 2               	Enter_LL_WriteHalfwayPages:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp WriteHalfwayPages
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro scenarios_callgate
+000000r 2               	.res $FE00 - *, $EA
+000000r 2               	Enter_ScenLoadArea:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenLoadArea
+000000r 2               
+000000r 2               	Enter_ScenReset:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenReset
+000000r 2               
+000000r 2               	Enter_ScenUpdateSelected:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenUpdateSelected
+000000r 2               
+000000r 2               	Enter_ScenValidate:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenValidate
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 2               MMC5_PRGMode          = $5100
+000000r 2               MMC5_CHRMode          = $5101
+000000r 2               MMC5_RAMProtect1      = $5102
+000000r 2               MMC5_RAMProtect2      = $5103
+000000r 2               MMC5_ExRamMode        = $5104
+000000r 2               MMC5_Nametables       = $5105
+000000r 2               MMC5_FillTile         = $5106
+000000r 2               MMC5_CHRBank          = $5120
+000000r 2               MMC5_PRGBank          = $5113
+000000r 2               MMC5_VSplitMode       = $5200
+000000r 2               MMC5_VSplitScroll     = $5201
+000000r 2               MMC5_VSplitBank       = $5202
+000000r 2               MMC5_SLCompare        = $5203
+000000r 2               MMC5_SLIRQ            = $5204
+000000r 2               MMC5_ExRamOfs         = $3C00
+000000r 2               
+000000r 2               ;
+000000r 2               ; Lower banks
+000000r 2               ;
+000000r 2               .macro control_bank
+000000r 2               	.res $FF00 - *, $EA
+000000r 2               
+000000r 2               	Enter_SoundEngine:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp SoundEngineExternal
+000000r 2               
+000000r 2               	ReturnBank:
+000000r 2               		lda BANK_SELECTED
+000000r 2               		jmp SetBankFromA
+000000r 2               
+000000r 2               	SetChrBank0FromA:
+000000r 2               		sta MMC5_CHRBank+3
+000000r 2               		rts
+000000r 2               
+000000r 2               	SetChrBank1FromA:
+000000r 2               		sta MMC5_CHRBank+7
+000000r 2               		rts
+000000r 2               
+000000r 2               	SetChrBanksFromAX:
+000000r 2               		jsr SetChrBank0FromA
+000000r 2               		txa
+000000r 2               		jmp SetChrBank1FromA
+000000r 2               
+000000r 2               	SetBankFromA:
+000000r 2               		clc
+000000r 2               		ora #$82			; mark as prg-rom
+000000r 2               		sta MMC5_PRGBank+4
+000000r 2               		rts
+000000r 2               
+000000r 2               	MapperReset:
+000000r 2               		;
+000000r 2               		; clear mapper state
+000000r 2               		;
+000000r 2               		sei
+000000r 2               		cld ;absolutely useless :)
+000000r 2               		ldx #$FF
+000000r 2               		txs
+000000r 2               		lda #%01000000         ; disable apu irq
+000000r 2               		sta $4017
+000000r 2               		lda #%10
+000000r 2               		sta MMC5_RAMProtect1
+000000r 2               		lda #%01
+000000r 2               		sta MMC5_RAMProtect2
+000000r 2               		lda #1
+000000r 2               		sta MMC5_CHRMode       ; use 1kb chr banking
+000000r 2               		lda #0
+000000r 2               		sta MMC5_PRGMode       ; use 32kb prg banking
+000000r 2               		lsr a
+000000r 2               		sta MMC5_PRGBank       ; use bank 0 for prg-ram
+000000r 2               		lda #%11
+000000r 2               		sta MMC5_ExRamMode
+000000r 2               		lda #BANK_LOADER
+000000r 2               		sta BANK_SELECTED
+000000r 2               		jsr SetBankFromA       ; set startup bank
+000000r 2               		lda #$44
+000000r 2               		sta MMC5_Nametables    ; set vertical mirroring
+000000r 2               		jmp $8000
+000000r 2               
+000000r 2               	StartBank:
+000000r 2               		;
+000000r 2               		; 0 Bank selected
+000000r 2               		;
+000000r 2               		sta BANK_SELECTED
+000000r 2               		ldx #$00
+000000r 2               		stx PPU_CTRL_REG1
+000000r 2               		stx PPU_CTRL_REG2
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp Start
+000000r 2               
+000000r 2               	IRQ:
+000000r 2               		sei
+000000r 2               		php
+000000r 2               		pha
+000000r 2               		lda MMC5_SLIRQ
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		and #%11110110           ;mask out sprite address and nametable
+000000r 2               		ora UseNtBase2400
+000000r 2               		sta Mirror_PPU_CTRL_REG1      ;update the register and its mirror
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               		lda HorizontalScroll
+000000r 2               		sta PPU_SCROLL_REG           ;set scroll regs for the screen under the status bar
+000000r 2               		lda #$00
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               		sta IRQAckFlag           ;indicate IRQ was acknowledged
+000000r 2               		tya                      ; waste some time to match 2j irq
+000000r 2               		ldy #$18                 ; ...
+000000r 2               	:   dey                      ; ...
+000000r 2               		bne :-                   ; ...
+000000r 2               		tay                      ; ...
+000000r 2               		pla
+000000r 2               		plp
+000000r 2               		cli
+000000r 2               		rti
+000000r 2               
+000000r 2               		.res $FFFA - *, $ea
+000000r 2               		;
+000000r 2               		; Interrupt table
+000000r 2               		;
+000000r 2               		.word NonMaskableInterrupt
+000000r 2               		.word MapperReset
+000000r 2               		.word IRQ
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 1               	.include "text.inc"
+000000r 2               .ifndef __TEXT_INC_DEF__
+000000r 2               .define __TEXT_INC_DEF__
+000000r 2               
+000000r 2               .charmap '0', 0
+000000r 2               .charmap '1', 1
+000000r 2               .charmap '2', 2
+000000r 2               .charmap '3', 3
+000000r 2               .charmap '4', 4
+000000r 2               .charmap '5', 5
+000000r 2               .charmap '6', 6
+000000r 2               .charmap '7', 7
+000000r 2               .charmap '8', 8
+000000r 2               .charmap '9', 9
+000000r 2               .charmap 'A', $0A
+000000r 2               .charmap 'B', $0B
+000000r 2               .charmap 'C', $0C
+000000r 2               .charmap 'D', $0D
+000000r 2               .charmap 'E', $0E
+000000r 2               .charmap 'F', $0F
+000000r 2               .charmap 'G', $10
+000000r 2               .charmap 'H', $11
+000000r 2               .charmap 'I', $12
+000000r 2               .charmap 'J', $13
+000000r 2               .charmap 'K', $14
+000000r 2               .charmap 'L', $15
+000000r 2               .charmap 'M', $16
+000000r 2               .charmap 'N', $17
+000000r 2               .charmap 'O', $18
+000000r 2               .charmap 'P', $19
+000000r 2               .charmap 'Q', $1a
+000000r 2               .charmap 'R', $1b
+000000r 2               .charmap 'S', $1c
+000000r 2               .charmap 'T', $1d
+000000r 2               .charmap 'U', $1e
+000000r 2               .charmap 'V', $1f
+000000r 2               .charmap 'W', $20
+000000r 2               .charmap 'X', $21
+000000r 2               .charmap 'Y', $22
+000000r 2               .charmap 'Z', $23
+000000r 2               .charmap '-', $28
+000000r 2               .charmap '!', $2b
+000000r 2               .charmap '*', $29
+000000r 2               .charmap ' ', $24
+000000r 2               .charmap '.', $2a
+000000r 2               .charmap ':', $28
+000000r 2               
+000000r 2               .macro text_block at, txt
+000000r 2               	.byte at >> 8
+000000r 2               	.byte at & $ff
+000000r 2               	.byte .strlen(txt)
+000000r 2               	.byte txt
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro inline_write_block name
+000000r 2               	.local @more_bytes
+000000r 2               	ldx #0
+000000r 2               	ldy VRAM_Buffer1_Offset
+000000r 2               @more_bytes:
+000000r 2               	lda name, x
+000000r 2               	sta VRAM_Buffer1, y
+000000r 2               	inx
+000000r 2               	iny
+000000r 2               	cmp #0
+000000r 2               	bne @more_bytes
+000000r 2               	dey
+000000r 2               	sty VRAM_Buffer1_Offset
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .endif
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 1               	.org $8000
+008000  1               	.segment "bank2"
+008000  1               
+008000  1               Start:
+008000  1               NonMaskableInterrupt:
+008000  1  EA EA EA EA  	control_bank
+008004  1  EA EA EA EA  
+008008  1  EA EA EA EA  
+010000  1               
+010000  1               

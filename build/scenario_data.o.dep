@@ -1,0 +1,4 @@
+build/scenario_data.o:	scen/scenario_data.asm inc/org.inc inc/mario.inc inc/shared.inc inc/macros.inc scen/scen_exports.asm
+
+scen/scenario_data.asm inc/org.inc inc/mario.inc inc/shared.inc inc/macros.inc scen/scen_exports.asm:
+

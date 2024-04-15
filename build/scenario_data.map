@@ -1,0 +1,2513 @@
+ca65 V2.19 - Git b993d8833
+Main file   : scen/scenario_data.asm
+Current file: scen/scenario_data.asm
+
+000000r 1               
+000000r 1               	.include "org.inc"
+000000r 2               CHR_SMB = 0
+000000r 2               CHR_PRACTICE = 2
+000000r 2               CHR_FPG = 4
+000000r 2               CHR_LOADER = 6
+000000r 2               
+000000r 2               ;
+000000r 2               ; FPG vars
+000000r 2               ;
+000000r 2               FpgRuleset = $0717		; DemoAction
+000000r 2               FpgSelected = $075a		; NumberOfLives
+000000r 2               FpgFlags  = $0761		; OffScr_NumberofLives
+000000r 2               FpgLastInput = $0762	; OffScr_HalfwayPage
+000000r 2               FpgScrollTo = $07d7 	; TopScoreDisplay+0
+000000r 2               FpgError = $07d8		; TopScoreDisplay+1
+000000r 2               FpgErrorParam = $07d9	; TopScoreDisplay+2
+000000r 2               FpgOldFlags = $07da		; TopScoreDisplay+3
+000000r 2               
+000000r 2               ;
+000000r 2               ; Practice vars
+000000r 2               ;
+000000r 2               ;
+000000r 2               ; RAM vars
+000000r 2               ;
+000000r 2               PowerUpFrames				= $04	; Anywhere thats temporary
+000000r 2               LastInputBits				= $075a ; Previously NumberOfLives
+000000r 2               MenuSelection				= $077a ; Previously NumberOfPlayers
+000000r 2               ;SaveStateFlags				= $07fc ; Previously WorldSelectEnableFlag
+000000r 2               SavedEnterTimer				= $07f7
+000000r 2               
+000000r 2               STATUS_BAR_OFFSET = $02
+000000r 2               RULE_COUNT_OFFSET = $0b
+000000r 2               FRAME_NUMBER_OFFSET = $15
+000000r 2               FRAMES_REMAIN_OFFSET = $0e
+000000r 2               POSITION_OFFSET = $12
+000000r 2               
+000000r 2               
+000000r 2               
+000000r 1               	.include "mario.inc"
+000000r 2               PPU_CTRL_REG1         = $2000
+000000r 2               PPU_CTRL_REG2         = $2001
+000000r 2               PPU_STATUS            = $2002
+000000r 2               PPU_SPR_ADDR          = $2003
+000000r 2               PPU_SPR_DATA          = $2004
+000000r 2               PPU_SCROLL_REG        = $2005
+000000r 2               PPU_ADDRESS           = $2006
+000000r 2               PPU_DATA              = $2007
+000000r 2               
+000000r 2               SND_REGISTER          = $4000
+000000r 2               SND_SQUARE1_REG       = $4000
+000000r 2               SND_SQUARE2_REG       = $4004
+000000r 2               SND_TRIANGLE_REG      = $4008
+000000r 2               SND_NOISE_REG         = $400c
+000000r 2               SND_DELTA_REG         = $4010
+000000r 2               SND_MASTERCTRL_REG    = $4015
+000000r 2               SND_VOLENV_REG        = $4080
+000000r 2               SND_FDS0_REG          = $4040
+000000r 2               SND_FDS1_REG          = $4041
+000000r 2               SND_PULSE_4002_REG    = $4002
+000000r 2               SND_PULSE_4003_REG    = $4003
+000000r 2               SND_PULSE_4004_REG    = $4004
+000000r 2               SND_PULSE_4005_REG    = $4005
+000000r 2               SND_PULSE_4006_REG    = $4006
+000000r 2               SND_TRIANGLE_400A_REG = $400A
+000000r 2               SND_TRIANGLE_400B_REG = $400B
+000000r 2               SND_NOISE_400E_REG    = $400E
+000000r 2               SND_NOISE_400F_REG    = $400F
+000000r 2               
+000000r 2               SPR_DMA               = $4014
+000000r 2               JOYPAD_PORT           = $4016
+000000r 2               JOYPAD_PORT1          = $4016
+000000r 2               JOYPAD_PORT2          = $4017
+000000r 2               
+000000r 2               ; GAME SPECIFIC DEFINES
+000000r 2               
+000000r 2               ObjectOffset          = $08
+000000r 2               
+000000r 2               FrameCounter          = $09
+000000r 2               
+000000r 2               SavedJoypadBits       = $06fc
+000000r 2               SavedJoypad1Bits      = $06fc
+000000r 2               SavedJoypad2Bits      = $06fd
+000000r 2               JoypadBitMask         = $074a
+000000r 2               JoypadOverride        = $0758
+000000r 2               
+000000r 2               A_B_Buttons           = $0a
+000000r 2               PreviousA_B_Buttons   = $0d
+000000r 2               Up_Down_Buttons       = $0b
+000000r 2               Left_Right_Buttons    = $0c
+000000r 2               
+000000r 2               GameEngineSubroutine  = $0e
+000000r 2               
+000000r 2               Mirror_PPU_CTRL_REG1  = $0778
+000000r 2               Mirror_PPU_CTRL_REG2  = $0779
+000000r 2               
+000000r 2               OperMode              = $0770
+000000r 2               OperMode_Task         = $0772
+000000r 2               ScreenRoutineTask     = $073c
+000000r 2               
+000000r 2               GamePauseStatus       = $0776
+000000r 2               GamePauseTimer        = $0777
+000000r 2               
+000000r 2               DemoAction            = $0717
+000000r 2               DemoActionTimer       = $0718
+000000r 2               
+000000r 2               TimerControl          = $0747
+000000r 2               IntervalTimerControl  = $077f
+000000r 2               
+000000r 2               Timers                = $0780
+000000r 2               SelectTimer           = $0780
+000000r 2               PlayerAnimTimer       = $0781
+000000r 2               JumpSwimTimer         = $0782
+000000r 2               RunningTimer          = $0783
+000000r 2               BlockBounceTimer      = $0784
+000000r 2               SideCollisionTimer    = $0785
+000000r 2               JumpspringTimer       = $0786
+000000r 2               GameTimerCtrlTimer    = $0787
+000000r 2               ClimbSideTimer        = $0789
+000000r 2               EnemyFrameTimer       = $078a
+000000r 2               FrenzyEnemyTimer      = $078f
+000000r 2               BowserFireBreathTimer = $0790
+000000r 2               StompTimer            = $0791
+000000r 2               AirBubbleTimer        = $0792
+000000r 2               ScrollIntervalTimer   = $0795
+000000r 2               EnemyIntervalTimer    = $0796
+000000r 2               BrickCoinTimer        = $079d
+000000r 2               InjuryTimer           = $079e
+000000r 2               StarInvincibleTimer   = $079f
+000000r 2               ScreenTimer           = $07a0
+000000r 2               WorldEndTimer         = $07a1
+000000r 2               DemoTimer             = $07a2
+000000r 2               
+000000r 2               Sprite_Data           = $0200
+000000r 2               
+000000r 2               Sprite_Y_Position     = $0200
+000000r 2               Sprite_Tilenumber     = $0201
+000000r 2               Sprite_Attributes     = $0202
+000000r 2               Sprite_X_Position     = $0203
+000000r 2               
+000000r 2               ScreenEdge_PageLoc    = $071a
+000000r 2               ScreenEdge_X_Pos      = $071c
+000000r 2               ScreenLeft_PageLoc    = $071a
+000000r 2               ScreenRight_PageLoc   = $071b
+000000r 2               ScreenLeft_X_Pos      = $071c
+000000r 2               ScreenRight_X_Pos     = $071d
+000000r 2               
+000000r 2               PlayerFacingDir       = $33
+000000r 2               DestinationPageLoc    = $34
+000000r 2               VictoryWalkControl    = $35
+000000r 2               ScrollFractional      = $0768
+000000r 2               PrimaryMsgCounter     = $0719
+000000r 2               SecondaryMsgCounter   = $0749
+000000r 2               
+000000r 2               HorizontalScroll      = $073f
+000000r 2               VerticalScroll        = $0740
+000000r 2               ScrollLock            = $0723
+000000r 2               ScrollThirtyTwo       = $073d
+000000r 2               Player_X_Scroll       = $06ff
+000000r 2               Player_Pos_ForScroll  = $0755
+000000r 2               ScrollAmount          = $0775
+000000r 2               
+000000r 2               AreaData              = $e7
+000000r 2               AreaDataLow           = $e7
+000000r 2               AreaDataHigh          = $e8
+000000r 2               EnemyData             = $e9
+000000r 2               EnemyDataLow          = $e9
+000000r 2               EnemyDataHigh         = $ea
+000000r 2               
+000000r 2               AreaParserTaskNum     = $071f
+000000r 2               ColumnSets            = $071e
+000000r 2               CurrentPageLoc        = $0725
+000000r 2               CurrentColumnPos      = $0726
+000000r 2               BackloadingFlag       = $0728
+000000r 2               BehindAreaParserFlag  = $0729
+000000r 2               AreaObjectPageLoc     = $072a
+000000r 2               AreaObjectPageSel     = $072b
+000000r 2               AreaDataOffset        = $072c
+000000r 2               AreaObjOffsetBuffer   = $072d
+000000r 2               AreaObjectLength      = $0730
+000000r 2               StaircaseControl      = $0734
+000000r 2               AreaObjectHeight      = $0735
+000000r 2               MushroomLedgeHalfLen  = $0736
+000000r 2               EnemyDataOffset       = $0739
+000000r 2               EnemyObjectPageLoc    = $073a
+000000r 2               EnemyObjectPageSel    = $073b
+000000r 2               MetatileBuffer        = $06a1
+000000r 2               BlockBufferColumnPos  = $06a0
+000000r 2               CurrentNTAddr_Low     = $0721
+000000r 2               CurrentNTAddr_High    = $0720
+000000r 2               AttributeBuffer       = $03f9
+000000r 2               
+000000r 2               LoopCommand           = $0745
+000000r 2               
+000000r 2               DisplayDigits         = $07d7
+000000r 2               TopScoreDisplay       = $07d7
+000000r 2               ScoreAndCoinDisplay   = $07dd
+000000r 2               PlayerScoreDisplay    = $07dd
+000000r 2               GameTimerDisplay      = $07f8
+000000r 2               DigitModifier         = $0134
+000000r 2               
+000000r 2               VerticalFlipFlag      = $0109
+000000r 2               FloateyNum_Control    = $0110
+000000r 2               ShellChainCounter     = $0125
+000000r 2               FloateyNum_Timer      = $012c
+000000r 2               FloateyNum_X_Pos      = $0117
+000000r 2               FloateyNum_Y_Pos      = $011e
+000000r 2               FlagpoleFNum_Y_Pos    = $010d
+000000r 2               FlagpoleFNum_YMFDummy = $010e
+000000r 2               FlagpoleScore         = $010f
+000000r 2               FlagpoleCollisionYPos = $070f
+000000r 2               StompChainCounter     = $0484
+000000r 2               
+000000r 2               VRAM_Buffer1_Offset   = $0300
+000000r 2               VRAM_Buffer1          = $0301
+000000r 2               VRAM_Buffer2_Offset   = $0340
+000000r 2               VRAM_Buffer2          = $0341
+000000r 2               VRAM_Buffer_AddrCtrl  = $0773
+000000r 2               Sprite0HitDetectFlag  = $0722
+000000r 2               IRQUpdateFlag         = $0722
+000000r 2               IRQAckFlag            = $077b
+000000r 2               DisableScreenFlag     = $0774
+000000r 2               DisableIntermediate   = $0769
+000000r 2               ColorRotateOffset     = $06d4
+000000r 2               
+000000r 2               TerrainControl        = $0727
+000000r 2               AreaStyle             = $0733
+000000r 2               ForegroundScenery     = $0741
+000000r 2               BackgroundScenery     = $0742
+000000r 2               CloudTypeOverride     = $0743
+000000r 2               BackgroundColorCtrl   = $0744
+000000r 2               AreaType              = $074e
+000000r 2               AreaAddrsLOffset      = $074f
+000000r 2               AreaPointer           = $0750
+000000r 2               
+000000r 2               PlayerEntranceCtrl    = $0710
+000000r 2               GameTimerSetting      = $0715
+000000r 2               AltEntranceControl    = $0752
+000000r 2               EntrancePage          = $0751
+000000r 2               NumberOfPlayers       = $077a
+000000r 2               UseNtBase2400 		  = $077a
+000000r 2               WarpZoneControl       = $06d6
+000000r 2               ChangeAreaTimer       = $06de
+000000r 2               
+000000r 2               MultiLoopCorrectCntr  = $06d9
+000000r 2               MultiLoopPassCntr     = $06da
+000000r 2               
+000000r 2               FetchNewGameTimerFlag = $0757
+000000r 2               GameTimerExpiredFlag  = $0759
+000000r 2               
+000000r 2               PrimaryHardMode       = $076a
+000000r 2               SecondaryHardMode     = $06cc
+000000r 2               WorldSelectNumber     = $076b
+000000r 2               WorldSelectEnableFlag = $07fc
+000000r 2               ContinueWorld         = $07fd
+000000r 2               
+000000r 2               .define IsPlayingLuigi CurrentPlayer
+000000r 2               
+000000r 2               CurrentPlayer         = $0753
+000000r 2               PlayerSize            = $0754
+000000r 2               PlayerStatus          = $0756
+000000r 2               
+000000r 2               ;OnscreenPlayerInfo    = $075a
+000000r 2               ;NumberofLives         = $075a ;used by current player
+000000r 2               HalfwayPage           = $075b
+000000r 2               LevelNumber           = $075c ;the actual dash number
+000000r 2               Hidden1UpFlag         = $075d
+000000r 2               CoinTally             = $075e
+000000r 2               WorldNumber           = $075f
+000000r 2               AreaNumber            = $0760 ;internal number used to find areas
+000000r 2               
+000000r 2               CoinTallyFor1Ups      = $0748
+000000r 2               
+000000r 2               OffscreenPlayerInfo   = $0761
+000000r 2               OffScr_NumberofLives  = $0761 ;used by offscreen player
+000000r 2               OffScr_HalfwayPage    = $0762
+000000r 2               OffScr_LevelNumber    = $0763
+000000r 2               OffScr_Hidden1UpFlag  = $0764
+000000r 2               OffScr_CoinTally      = $0765
+000000r 2               OffScr_WorldNumber    = $0766
+000000r 2               OffScr_AreaNumber     = $0767
+000000r 2               
+000000r 2               BalPlatformAlignment  = $03a0
+000000r 2               Platform_X_Scroll     = $03a1
+000000r 2               PlatformCollisionFlag = $03a2
+000000r 2               YPlatformTopYPos      = $0401
+000000r 2               YPlatformCenterYPos   = $58
+000000r 2               
+000000r 2               BrickCoinTimerFlag    = $06bc
+000000r 2               StarFlagTaskControl   = $0746
+000000r 2               
+000000r 2               PseudoRandomBitReg    = $07a7
+000000r 2               
+000000r 2               SprShuffleAmtOffset   = $06e0
+000000r 2               SprShuffleAmt         = $06e1
+000000r 2               SprDataOffset         = $06e4
+000000r 2               Player_SprDataOffset  = $06e4
+000000r 2               Enemy_SprDataOffset   = $06e5
+000000r 2               Block_SprDataOffset   = $06ec
+000000r 2               Alt_SprDataOffset     = $06ec
+000000r 2               Bubble_SprDataOffset  = $06ee
+000000r 2               FBall_SprDataOffset   = $06f1
+000000r 2               Misc_SprDataOffset    = $06f3
+000000r 2               SprDataOffset_Ctrl    = $03ee
+000000r 2               
+000000r 2               Player_State          = $1d
+000000r 2               Enemy_State           = $1e
+000000r 2               Fireball_State        = $24
+000000r 2               Block_State           = $26
+000000r 2               Misc_State            = $2a
+000000r 2               
+000000r 2               Player_MovingDir      = $45
+000000r 2               Enemy_MovingDir       = $46
+000000r 2               
+000000r 2               SprObject_X_Speed     = $57
+000000r 2               Player_X_Speed        = $57
+000000r 2               Enemy_X_Speed         = $58
+000000r 2               Fireball_X_Speed      = $5e
+000000r 2               Block_X_Speed         = $60
+000000r 2               Misc_X_Speed          = $64
+000000r 2               
+000000r 2               Jumpspring_FixedYPos  = $58
+000000r 2               JumpspringAnimCtrl    = $070e
+000000r 2               JumpspringForce       = $06db
+000000r 2               
+000000r 2               SprObject_PageLoc     = $6d
+000000r 2               Player_PageLoc        = $6d
+000000r 2               Enemy_PageLoc         = $6e
+000000r 2               Fireball_PageLoc      = $74
+000000r 2               Block_PageLoc         = $76
+000000r 2               Misc_PageLoc          = $7a
+000000r 2               Bubble_PageLoc        = $83
+000000r 2               
+000000r 2               SprObject_X_Position  = $86
+000000r 2               Player_X_Position     = $86
+000000r 2               Enemy_X_Position      = $87
+000000r 2               Fireball_X_Position   = $8d
+000000r 2               Block_X_Position      = $8f
+000000r 2               Misc_X_Position       = $93
+000000r 2               Bubble_X_Position     = $9c
+000000r 2               
+000000r 2               SprObject_Y_Speed     = $9f
+000000r 2               Player_Y_Speed        = $9f
+000000r 2               Enemy_Y_Speed         = $a0
+000000r 2               Fireball_Y_Speed      = $a6
+000000r 2               Block_Y_Speed         = $a8
+000000r 2               Misc_Y_Speed          = $ac
+000000r 2               
+000000r 2               SprObject_Y_HighPos   = $b5
+000000r 2               Player_Y_HighPos      = $b5
+000000r 2               Enemy_Y_HighPos       = $b6
+000000r 2               Fireball_Y_HighPos    = $bc
+000000r 2               Block_Y_HighPos       = $be
+000000r 2               Misc_Y_HighPos        = $c2
+000000r 2               Bubble_Y_HighPos      = $cb
+000000r 2               
+000000r 2               SprObject_Y_Position  = $ce
+000000r 2               Player_Y_Position     = $ce
+000000r 2               Enemy_Y_Position      = $cf
+000000r 2               Fireball_Y_Position   = $d5
+000000r 2               Block_Y_Position      = $d7
+000000r 2               Misc_Y_Position       = $db
+000000r 2               Bubble_Y_Position     = $e4
+000000r 2               
+000000r 2               SprObject_Rel_XPos    = $03ad
+000000r 2               Player_Rel_XPos       = $03ad
+000000r 2               Enemy_Rel_XPos        = $03ae
+000000r 2               Fireball_Rel_XPos     = $03af
+000000r 2               Bubble_Rel_XPos       = $03b0
+000000r 2               Block_Rel_XPos        = $03b1
+000000r 2               Misc_Rel_XPos         = $03b3
+000000r 2               
+000000r 2               SprObject_Rel_YPos    = $03b8
+000000r 2               Player_Rel_YPos       = $03b8
+000000r 2               Enemy_Rel_YPos        = $03b9
+000000r 2               Fireball_Rel_YPos     = $03ba
+000000r 2               Bubble_Rel_YPos       = $03bb
+000000r 2               Block_Rel_YPos        = $03bc
+000000r 2               Misc_Rel_YPos         = $03be
+000000r 2               
+000000r 2               SprObject_SprAttrib   = $03c4
+000000r 2               Player_SprAttrib      = $03c4
+000000r 2               Enemy_SprAttrib       = $03c5
+000000r 2               
+000000r 2               SprObject_X_MoveForce = $0400
+000000r 2               Enemy_X_MoveForce     = $0401
+000000r 2               
+000000r 2               SprObject_YMF_Dummy   = $0416
+000000r 2               Player_YMF_Dummy      = $0416
+000000r 2               Enemy_YMF_Dummy       = $0417
+000000r 2               Bubble_YMF_Dummy      = $042c
+000000r 2               
+000000r 2               SprObject_Y_MoveForce = $0433
+000000r 2               Player_Y_MoveForce    = $0433
+000000r 2               Enemy_Y_MoveForce     = $0434
+000000r 2               Block_Y_MoveForce     = $043c
+000000r 2               
+000000r 2               DisableCollisionDet   = $0716
+000000r 2               Player_CollisionBits  = $0490
+000000r 2               Enemy_CollisionBits   = $0491
+000000r 2               
+000000r 2               SprObj_BoundBoxCtrl   = $0499
+000000r 2               Player_BoundBoxCtrl   = $0499
+000000r 2               Enemy_BoundBoxCtrl    = $049a
+000000r 2               Fireball_BoundBoxCtrl = $04a0
+000000r 2               Misc_BoundBoxCtrl     = $04a2
+000000r 2               
+000000r 2               EnemyFrenzyBuffer     = $06cb
+000000r 2               EnemyFrenzyQueue      = $06cd
+000000r 2               Enemy_Flag            = $0f
+000000r 2               Enemy_ID              = $16
+000000r 2               
+000000r 2               PlayerGfxOffset       = $06d5
+000000r 2               Player_XSpeedAbsolute = $0700
+000000r 2               FrictionAdderHigh     = $0701
+000000r 2               FrictionAdderLow      = $0702
+000000r 2               RunningSpeed          = $0703
+000000r 2               SwimmingFlag          = $0704
+000000r 2               Player_X_MoveForce    = $0705
+000000r 2               DiffToHaltJump        = $0706
+000000r 2               JumpOrigin_Y_HighPos  = $0707
+000000r 2               JumpOrigin_Y_Position = $0708
+000000r 2               VerticalForce         = $0709
+000000r 2               VerticalForceDown     = $070a
+000000r 2               PlayerChangeSizeFlag  = $070b
+000000r 2               PlayerAnimTimerSet    = $070c
+000000r 2               PlayerAnimCtrl        = $070d
+000000r 2               DeathMusicLoaded      = $0712
+000000r 2               FlagpoleSoundQueue    = $0713
+000000r 2               CrouchingFlag         = $0714
+000000r 2               MaximumLeftSpeed      = $0450
+000000r 2               MaximumRightSpeed     = $0456
+000000r 2               
+000000r 2               SprObject_OffscrBits  = $03d0
+000000r 2               Player_OffscreenBits  = $03d0
+000000r 2               Enemy_OffscreenBits   = $03d1
+000000r 2               FBall_OffscreenBits   = $03d2
+000000r 2               Bubble_OffscreenBits  = $03d3
+000000r 2               Block_OffscreenBits   = $03d4
+000000r 2               Misc_OffscreenBits    = $03d6
+000000r 2               EnemyOffscrBitsMasked = $03d8
+000000r 2               
+000000r 2               Cannon_Offset         = $046a
+000000r 2               Cannon_PageLoc        = $046b
+000000r 2               Cannon_X_Position     = $0471
+000000r 2               Cannon_Y_Position     = $0477
+000000r 2               Cannon_Timer          = $047d
+000000r 2               
+000000r 2               Whirlpool_Offset      = $046a
+000000r 2               Whirlpool_PageLoc     = $046b
+000000r 2               Whirlpool_LeftExtent  = $0471
+000000r 2               Whirlpool_Length      = $0477
+000000r 2               Whirlpool_Flag        = $047d
+000000r 2               
+000000r 2               VineFlagOffset        = $0398
+000000r 2               VineHeight            = $0399
+000000r 2               VineObjOffset         = $039a
+000000r 2               VineStart_Y_Position  = $039d
+000000r 2               
+000000r 2               Block_Orig_YPos       = $03e4
+000000r 2               Block_BBuf_Low        = $03e6
+000000r 2               Block_Metatile        = $03e8
+000000r 2               Block_PageLoc2        = $03ea
+000000r 2               Block_RepFlag         = $03ec
+000000r 2               Block_ResidualCounter = $03f0
+000000r 2               Block_Orig_XPos       = $03f1
+000000r 2               
+000000r 2               BoundingBox_UL_XPos   = $04ac
+000000r 2               BoundingBox_UL_YPos   = $04ad
+000000r 2               BoundingBox_DR_XPos   = $04ae
+000000r 2               BoundingBox_DR_YPos   = $04af
+000000r 2               BoundingBox_UL_Corner = $04ac
+000000r 2               BoundingBox_LR_Corner = $04ae
+000000r 2               EnemyBoundingBoxCoord = $04b0
+000000r 2               
+000000r 2               PowerUpType           = $39
+000000r 2               
+000000r 2               FireballBouncingFlag  = $3a
+000000r 2               FireballCounter       = $06ce
+000000r 2               FireballThrowingTimer = $0711
+000000r 2               
+000000r 2               HammerEnemyOffset     = $06ae
+000000r 2               JumpCoinMiscOffset    = $06b7
+000000r 2               
+000000r 2               Block_Buffer_1        = $0500
+000000r 2               Block_Buffer_2        = $05d0
+000000r 2               
+000000r 2               HammerThrowingTimer   = $03a2
+000000r 2               HammerBroJumpTimer    = $3c
+000000r 2               Misc_Collision_Flag   = $06be
+000000r 2               
+000000r 2               RedPTroopaOrigXPos    = $0401
+000000r 2               RedPTroopaCenterYPos  = $58
+000000r 2               
+000000r 2               XMovePrimaryCounter   = $a0
+000000r 2               XMoveSecondaryCounter = $58
+000000r 2               
+000000r 2               CheepCheepMoveMFlag   = $58
+000000r 2               CheepCheepOrigYPos    = $0434
+000000r 2               BitMFilter            = $06dd
+000000r 2               
+000000r 2               LakituReappearTimer   = $06d1
+000000r 2               LakituMoveSpeed       = $58
+000000r 2               LakituMoveDirection   = $a0
+000000r 2               
+000000r 2               FirebarSpinState_Low  = $58
+000000r 2               FirebarSpinState_High = $a0
+000000r 2               FirebarSpinSpeed      = $0388
+000000r 2               FirebarSpinDirection  = $34
+000000r 2               
+000000r 2               DuplicateObj_Offset   = $06cf
+000000r 2               NumberofGroupEnemies  = $06d3
+000000r 2               
+000000r 2               BlooperMoveCounter    = $a0
+000000r 2               BlooperMoveSpeed      = $58
+000000r 2               
+000000r 2               BowserBodyControls    = $0363
+000000r 2               BowserFeetCounter     = $0364
+000000r 2               BowserMovementSpeed   = $0365
+000000r 2               BowserOrigXPos        = $0366
+000000r 2               BowserFlameTimerCtrl  = $0367
+000000r 2               BowserFront_Offset    = $0368
+000000r 2               BridgeCollapseOffset  = $0369
+000000r 2               BowserGfxFlag         = $036a
+000000r 2               BowserHitPoints       = $0483
+000000r 2               MaxRangeFromOrigin    = $06dc
+000000r 2               
+000000r 2               BowserFlamePRandomOfs = $0417
+000000r 2               
+000000r 2               PiranhaPlantUpYPos    = $0417
+000000r 2               PiranhaPlantDownYPos  = $0434
+000000r 2               PiranhaPlant_Y_Speed  = $58
+000000r 2               PiranhaPlant_MoveFlag = $a0
+000000r 2               
+000000r 2               FireworksCounter      = $06d7
+000000r 2               ExplosionGfxCounter   = $58
+000000r 2               ExplosionTimerCounter = $a0
+000000r 2               
+000000r 2               ;sound related defines
+000000r 2               Squ2_NoteLenBuffer    = $07b3
+000000r 2               Squ2_NoteLenCounter   = $07b4
+000000r 2               Squ2_EnvelopeDataCtrl = $07b5
+000000r 2               Squ1_NoteLenCounter   = $07b6
+000000r 2               Squ1_EnvelopeDataCtrl = $07b7
+000000r 2               Tri_NoteLenBuffer     = $07b8
+000000r 2               Tri_NoteLenCounter    = $07b9
+000000r 2               Noise_BeatLenCounter  = $07ba
+000000r 2               Squ1_SfxLenCounter    = $07bb
+000000r 2               Squ2_SfxLenCounter    = $07bd
+000000r 2               Sfx_SecondaryCounter  = $07be
+000000r 2               Noise_SfxLenCounter   = $07bf
+000000r 2               
+000000r 2               PauseSoundQueue       = $fa
+000000r 2               Square1SoundQueue     = $ff
+000000r 2               Square2SoundQueue     = $fe
+000000r 2               NoiseSoundQueue       = $fd
+000000r 2               AreaMusicQueue        = $fb
+000000r 2               EventMusicQueue       = $fc
+000000r 2               
+000000r 2               Square1SoundBuffer    = $f1
+000000r 2               Square2SoundBuffer    = $f2
+000000r 2               NoiseSoundBuffer      = $f3
+000000r 2               AreaMusicBuffer       = $f4
+000000r 2               EventMusicBuffer      = $07b1
+000000r 2               PauseSoundBuffer      = $07b2
+000000r 2               
+000000r 2               MusicData             = $f5
+000000r 2               MusicDataLow          = $f5
+000000r 2               MusicDataHigh         = $f6
+000000r 2               MusicOffset_Square2   = $f7
+000000r 2               MusicOffset_Square1   = $f8
+000000r 2               MusicOffset_Triangle  = $f9
+000000r 2               MusicOffset_Noise     = $07b0
+000000r 2               
+000000r 2               NoteLenLookupTblOfs   = $f0
+000000r 2               DAC_Counter           = $07c0
+000000r 2               NoiseDataLoopbackOfs  = $07c1
+000000r 2               NoteLengthTblAdder    = $07c4
+000000r 2               AreaMusicBuffer_Alt   = $07c5
+000000r 2               PauseModeFlag         = $07c6
+000000r 2               GroundMusicHeaderOfs  = $07c7
+000000r 2               AltRegContentFlag     = $07ca
+000000r 2               
+000000r 2               ;-------------------------------------------------------------------------------------
+000000r 2               ;CONSTANTS
+000000r 2               
+000000r 2               ;sound effects constants
+000000r 2               Sfx_SmallJump         = %10000000
+000000r 2               Sfx_Flagpole          = %01000000
+000000r 2               Sfx_Fireball          = %00100000
+000000r 2               Sfx_PipeDown_Injury   = %00010000
+000000r 2               Sfx_EnemySmack        = %00001000
+000000r 2               Sfx_EnemyStomp        = %00000100
+000000r 2               Sfx_Bump              = %00000010
+000000r 2               Sfx_BigJump           = %00000001
+000000r 2               
+000000r 2               Sfx_BowserFall        = %10000000
+000000r 2               Sfx_ExtraLife         = %01000000
+000000r 2               Sfx_PowerUpGrab       = %00100000
+000000r 2               Sfx_TimerTick         = %00010000
+000000r 2               Sfx_Blast             = %00001000
+000000r 2               Sfx_GrowVine          = %00000100
+000000r 2               Sfx_GrowPowerUp       = %00000010
+000000r 2               Sfx_CoinGrab          = %00000001
+000000r 2               
+000000r 2               Sfx_BowserFlame       = %00000010
+000000r 2               Sfx_BrickShatter      = %00000001
+000000r 2               
+000000r 2               ;music constants
+000000r 2               Silence               = %10000000
+000000r 2               
+000000r 2               StarPowerMusic        = %01000000
+000000r 2               PipeIntroMusic        = %00100000
+000000r 2               CloudMusic            = %00010000
+000000r 2               CastleMusic           = %00001000
+000000r 2               UndergroundMusic      = %00000100
+000000r 2               WaterMusic            = %00000010
+000000r 2               GroundMusic           = %00000001
+000000r 2               
+000000r 2               TimeRunningOutMusic   = %01000000
+000000r 2               EndOfLevelMusic       = %00100000
+000000r 2               AltGameOverMusic      = %00010000
+000000r 2               EndOfCastleMusic      = %00001000
+000000r 2               VictoryMusic          = %00000100
+000000r 2               GameOverMusic         = %00000010
+000000r 2               DeathMusic            = %00000001
+000000r 2               
+000000r 2               ;enemy object constants
+000000r 2               GreenKoopa            = $00
+000000r 2               BuzzyBeetle           = $02
+000000r 2               RedKoopa              = $03
+000000r 2               HammerBro             = $05
+000000r 2               Goomba                = $06
+000000r 2               Bloober               = $07
+000000r 2               BulletBill_FrenzyVar  = $08
+000000r 2               GreyCheepCheep        = $0a
+000000r 2               RedCheepCheep         = $0b
+000000r 2               Podoboo               = $0c
+000000r 2               PiranhaPlant          = $0d
+000000r 2               GreenParatroopaJump   = $0e
+000000r 2               RedParatroopa         = $0f
+000000r 2               GreenParatroopaFly    = $10
+000000r 2               Lakitu                = $11
+000000r 2               Spiny                 = $12
+000000r 2               FlyCheepCheepFrenzy   = $14
+000000r 2               FlyingCheepCheep      = $14
+000000r 2               BowserFlame           = $15
+000000r 2               Fireworks             = $16
+000000r 2               BBill_CCheep_Frenzy   = $17
+000000r 2               Stop_Frenzy           = $18
+000000r 2               Bowser                = $2d
+000000r 2               PowerUpObject         = $2e
+000000r 2               VineObject            = $2f
+000000r 2               FlagpoleFlagObject    = $30
+000000r 2               StarFlagObject        = $31
+000000r 2               JumpspringObject      = $32
+000000r 2               BulletBill_CannonVar  = $33
+000000r 2               RetainerObject        = $35
+000000r 2               TallEnemy             = $09
+000000r 2               
+000000r 2               ;other constants
+000000r 2               World1 = 0
+000000r 2               World2 = 1
+000000r 2               World3 = 2
+000000r 2               World4 = 3
+000000r 2               World5 = 4
+000000r 2               World6 = 5
+000000r 2               World7 = 6
+000000r 2               World8 = 7
+000000r 2               Level1 = 0
+000000r 2               Level2 = 1
+000000r 2               Level3 = 2
+000000r 2               Level4 = 3
+000000r 2               
+000000r 2               WarmBootOffset        = <$07d6
+000000r 2               ColdBootOffset        = <$07fe
+000000r 2               TitleScreenDataOffset = $1ec0
+000000r 2               SoundMemory           = $07b0
+000000r 2               
+000000r 2               .define SwimTileRepOffset		PlayerGraphicsTable + $9e
+000000r 2               .define MusicHeaderOffsetData	MusicHeaderData - 1
+000000r 2               .define MHD 					MusicHeaderData
+000000r 2               
+000000r 2               A_Button              = %10000000
+000000r 2               B_Button              = %01000000
+000000r 2               Select_Button         = %00100000
+000000r 2               Start_Button          = %00010000
+000000r 2               Up_Dir                = %00001000
+000000r 2               Down_Dir              = %00000100
+000000r 2               Left_Dir              = %00000010
+000000r 2               Right_Dir             = %00000001
+000000r 2               
+000000r 2               TitleScreenModeValue  = 0
+000000r 2               GameModeValue         = 1
+000000r 2               VictoryModeValue      = 2
+000000r 2               GameOverModeValue     = 3
+000000r 2               
+000000r 1               	.include "shared.inc"
+000000r 2               BANK_SELECTED = $07ff
+000000r 2               
+000000r 2               .define PF_SockMode $01 ; Todo move elsewhere...
+000000r 2               .define PF_SaveState $02
+000000r 2               .define PF_LoadState $04
+000000r 2               .define PF_RestartLevel $08
+000000r 2               .define PF_LevelEntrySaved $10
+000000r 2               .define PF_DisablePracticeInfo $20
+000000r 2               .define PF_EnableInputDisplay $40
+000000r 2               
+000000r 2               .macro PF_SetToLevelEnd_A
+000000r 2               	lda WRAM_PracticeFlags
+000000r 2               	and #(PF_LevelEntrySaved^$FF)
+000000r 2               	sta WRAM_PracticeFlags
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro MACRO_ThrowFrameImpl
+000000r 2               ThrowFrame:
+000000r 2               		lda Mirror_PPU_CTRL_REG2
+000000r 2               		sta PPU_CTRL_REG2
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		and #$FC
+000000r 2               		sta Mirror_PPU_CTRL_REG1
+000000r 2               		sta PPU_CTRL_REG1 ; Force NT-0 (in case no button was pressed)
+000000r 2               
+000000r 2               		;
+000000r 2               		; Wait for sprite 0
+000000r 2               		;
+000000r 2               		lda Sprite0HitDetectFlag  ;check for flag here
+000000r 2               		beq @SkipSprite0
+000000r 2               		ldx #0
+000000r 2               		stx PPU_SPR_ADDR
+000000r 2               		lda Sprite0Data
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+1
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+2
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda Sprite0Data+3
+000000r 2               		sta PPU_SPR_DATA
+000000r 2               		lda PPU_STATUS
+000000r 2               		stx PPU_SCROLL_REG
+000000r 2               		stx PPU_SCROLL_REG
+000000r 2               @Sprite0Clr:
+000000r 2               		lda PPU_STATUS
+000000r 2               		and #$40
+000000r 2               		bne @Sprite0Clr
+000000r 2               @Sprite0Hit:
+000000r 2               		lda PPU_STATUS
+000000r 2               		and #$40
+000000r 2               		beq @Sprite0Hit
+000000r 2               		ldy #$14
+000000r 2               @HBlankDelay:
+000000r 2               		dey
+000000r 2               		bne @HBlankDelay
+000000r 2               @SkipSprite0:
+000000r 2               		lda PPU_STATUS
+000000r 2               		lda HorizontalScroll
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               		lda VerticalScroll
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               
+000000r 2               		lda ScreenLeft_PageLoc
+000000r 2               		lsr Mirror_PPU_CTRL_REG1
+000000r 2               		and #$01
+000000r 2               		ror
+000000r 2               		rol Mirror_PPU_CTRL_REG1
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               
+000000r 2               		lda WRAM_SlowMotion
+000000r 2               		cmp #4
+000000r 2               		bne @done
+000000r 2               		;
+000000r 2               		; Latch controllers.
+000000r 2               		;
+000000r 2               		ldx #1
+000000r 2               		stx $4016
+000000r 2               		dex
+000000r 2               		stx $4016
+000000r 2               		;
+000000r 2               		; Check A
+000000r 2               		;
+000000r 2               		lda $4017
+000000r 2               		lsr
+000000r 2               		bcs @done ; A pressed. Advance next frame
+000000r 2               		lda $4017 ; B
+000000r 2               		lda $4017 ; Select
+000000r 2               		lda $4017 ; Start
+000000r 2               		lsr
+000000r 2               		bcc @VBlank0
+000000r 2               		;
+000000r 2               		; Start pressed - Exit frame advance mode.
+000000r 2               		;
+000000r 2               		stx WRAM_SlowMotion
+000000r 2               		jmp @done ; Exit out of this.
+000000r 2               @VBlank0:
+000000r 2               		lda PPU_STATUS ; Wait for VBlank
+000000r 2               		bpl @VBlank0
+000000r 2               		jmp ThrowFrame
+000000r 2               @done:
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		ora #$80 ; NMI
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               		jmp Enter_SoundEngine
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro MACRO_RunSlowMo gm
+000000r 2               		dec WRAM_SlowMotionLeft
+000000r 2               		bmi @allow_frame
+000000r 2               		lda DisableScreenFlag
+000000r 2               		bne @allow_frame
+000000r 2               		lda GamePauseStatus
+000000r 2               		and #3
+000000r 2               		bne @allow_frame
+000000r 2               		ldx OperMode
+000000r 2               		dex
+000000r 2               		bne @allow_frame
+000000r 2               		lda OperMode_Task
+000000r 2               		cmp #gm
+000000r 2               		bne @allow_frame
+000000r 2               		jsr ThrowFrame
+000000r 2               		rti
+000000r 2               @allow_frame:
+000000r 2               		lda WRAM_SlowMotion
+000000r 2               		sta WRAM_SlowMotionLeft
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .define MMC5_MAKE_PRGBANK(id) ((id)*4)
+000000r 2               .define MAKE_MMC5_CHRBANK(id) ((id)*1)
+000000r 2               
+000000r 2               TITLE_INIT		= $01
+000000r 2               
+000000r 2               BANK_LOADER		= MMC5_MAKE_PRGBANK(0)
+000000r 2               BANK_CHR		= MMC5_MAKE_PRGBANK(1)
+000000r 2               BANK_ORG		= MMC5_MAKE_PRGBANK(2)
+000000r 2               BANK_COMMON		= MMC5_MAKE_PRGBANK(3)
+000000r 2               BANK_SCEN		= MMC5_MAKE_PRGBANK(4)
+000000r 2               BANK_SCEN_DATA	= MMC5_MAKE_PRGBANK(5)
+000000r 2               BANK_SMBLL		= MMC5_MAKE_PRGBANK(6)
+000000r 2               BANK_LLDATA		= MMC5_MAKE_PRGBANK(7)
+000000r 2               
+000000r 2               
+000000r 2               CHR_ORG_SPR = MAKE_MMC5_CHRBANK(0)
+000000r 2               CHR_ORG_BG = MAKE_MMC5_CHRBANK(1)
+000000r 2               CHR_ORG_BG_ALTFONT = MAKE_MMC5_CHRBANK(2)
+000000r 2               CHR_LOST_SPR = MAKE_MMC5_CHRBANK(3)
+000000r 2               CHR_LOST_BG = MAKE_MMC5_CHRBANK(4)
+000000r 2               CHR_LOST_BG_ALTFONT = MAKE_MMC5_CHRBANK(5)
+000000r 2               CHR_PEACH_SPR = MAKE_MMC5_CHRBANK(6)
+000000r 2               CHR_INTRO_BG = MAKE_MMC5_CHRBANK(7)
+000000r 2               CHR_INTRO_SPR0 = MAKE_MMC5_CHRBANK(8)
+000000r 2               
+000000r 2               CHR_SET_BANK = $A000
+000000r 2               
+000000r 2               SavedRule = $07d9
+000000r 2               RuleIndex = $0717 ; Previously DemoAction (can be changed to temp?)
+000000r 2               PowerUps = $07e3 ; Previously unused
+000000r 2               CurrentRule = $7df
+000000r 2               
+000000r 2               .ifndef RESTART_LEVEL_BUTTONS
+000000r 2               	.define RESTART_LEVEL_BUTTONS Select_Button|Up_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef RESTART_GAME_BUTTONS
+000000r 2               	.define RESTART_GAME_BUTTONS Select_Button|Down_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef SAVE_STATE_BUTTONS
+000000r 2               	.define SAVE_STATE_BUTTONS Select_Button|Right_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               .ifndef LOAD_STATE_BUTTONS
+000000r 2               	.define LOAD_STATE_BUTTONS Select_Button|Left_Dir
+000000r 2               .endif
+000000r 2               
+000000r 2               
+000000r 1               	.include "macros.inc"
+000000r 2               .macro lsr_by n
+000000r 2               	.repeat n, i
+000000r 2               		lsr
+000000r 2               	.endrep
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro DoUpdateSockHash
+000000r 2               		.local @dont_render
+000000r 2               		lda WRAM_PracticeFlags
+000000r 2               		and #PF_SockMode
+000000r 2               		bne @dont_render
+000000r 2               		lda IntervalTimerControl
+000000r 2               		and #3
+000000r 2               		cmp #2
+000000r 2               		bne @dont_render
+000000r 2               		jsr Enter_ForceUpdateSockHash
+000000r 2               	@dont_render:
+000000r 2               .endmacro
+000000r 2               
+000000r 2               .macro practice_callgate
+000000r 2               	.res $FE00 - *, $EA
+000000r 2               
+000000r 2               	Enter_EndOfCastle:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp EndOfCastle
+000000r 2               
+000000r 2               	Enter_RenderIntermediateTime:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RenderIntermediateTime
+000000r 2               
+000000r 2               	Enter_FrameToTime:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp FrameToTime
+000000r 2               
+000000r 2               	Enter_UpdateGameTimer:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp UpdateGameTimer
+000000r 2               
+000000r 2               	Enter_InitializeWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp InitializeWRAM
+000000r 2               
+000000r 2               	Enter_SetDefaultWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp SetDefaultWRAM
+000000r 2               
+000000r 2               	Enter_FactoryResetWRAM:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp FactoryResetWRAM
+000000r 2               
+000000r 2               	Enter_RedrawSockTimer:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawSockTimer
+000000r 2               
+000000r 2               	Enter_PracticeInit:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeInit
+000000r 2               
+000000r 2               	Enter_ForceUpdateSockHash:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ForceUpdateSockHash
+000000r 2               
+000000r 2               	Enter_PracticeOnFrame:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeOnFrame
+000000r 2               
+000000r 2               	Enter_PracticeTitleMenu:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp PracticeTitleMenu
+000000r 2               
+000000r 2               	Enter_UpdateFrameRule:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp UpdateFrameRule
+000000r 2               
+000000r 2               	Enter_WritePracticeTop:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp WritePracticeTop
+000000r 2               
+000000r 2               	Enter_RedrawUserVars:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawUserVars
+000000r 2               
+000000r 2               	Enter_RedrawAll:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawAll
+000000r 2               
+000000r 2               	Enter_RedrawFrameNumbers:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp RedrawFrameNumbers
+000000r 2               
+000000r 2               	Enter_ProcessLevelLoad:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ProcessLevelLoad
+000000r 2               
+000000r 2               	Enter_LoadPhysicsData:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadPhysicsData
+000000r 2               
+000000r 2               	Enter_LoadMarioPhysics:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadMarioPhysics
+000000r 2               
+000000r 2               	Enter_LL_LoadWarpzone:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadWarpzone
+000000r 2               
+000000r 2               	Enter_LL_GetAreaDataAddrs:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp GetAreaDataAddrs
+000000r 2               
+000000r 2               	Enter_LL_LoadAreaPointer:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp LoadAreaPointer
+000000r 2               
+000000r 2               	Enter_LL_WriteHalfwayPages:
+000000r 2               		lda #BANK_LLDATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp WriteHalfwayPages
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 2               
+000000r 2               .macro scenarios_callgate
+000000r 2               	.res $FE00 - *, $EA
+000000r 2               	Enter_ScenLoadArea:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenLoadArea
+000000r 2               
+000000r 2               	Enter_ScenReset:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenReset
+000000r 2               
+000000r 2               	Enter_ScenUpdateSelected:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenUpdateSelected
+000000r 2               
+000000r 2               	Enter_ScenValidate:
+000000r 2               		lda #BANK_SCEN_DATA
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp ScenValidate
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 2               MMC5_PRGMode          = $5100
+000000r 2               MMC5_CHRMode          = $5101
+000000r 2               MMC5_RAMProtect1      = $5102
+000000r 2               MMC5_RAMProtect2      = $5103
+000000r 2               MMC5_ExRamMode        = $5104
+000000r 2               MMC5_Nametables       = $5105
+000000r 2               MMC5_FillTile         = $5106
+000000r 2               MMC5_CHRBank          = $5120
+000000r 2               MMC5_PRGBank          = $5113
+000000r 2               MMC5_VSplitMode       = $5200
+000000r 2               MMC5_VSplitScroll     = $5201
+000000r 2               MMC5_VSplitBank       = $5202
+000000r 2               MMC5_SLCompare        = $5203
+000000r 2               MMC5_SLIRQ            = $5204
+000000r 2               MMC5_ExRamOfs         = $3C00
+000000r 2               
+000000r 2               ;
+000000r 2               ; Lower banks
+000000r 2               ;
+000000r 2               .macro control_bank
+000000r 2               	.res $FF00 - *, $EA
+000000r 2               
+000000r 2               	Enter_SoundEngine:
+000000r 2               		lda #BANK_COMMON
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp SoundEngineExternal
+000000r 2               
+000000r 2               	ReturnBank:
+000000r 2               		lda BANK_SELECTED
+000000r 2               		jmp SetBankFromA
+000000r 2               
+000000r 2               	SetChrBank0FromA:
+000000r 2               		sta MMC5_CHRBank+3
+000000r 2               		rts
+000000r 2               
+000000r 2               	SetChrBank1FromA:
+000000r 2               		sta MMC5_CHRBank+7
+000000r 2               		rts
+000000r 2               
+000000r 2               	SetChrBanksFromAX:
+000000r 2               		jsr SetChrBank0FromA
+000000r 2               		txa
+000000r 2               		jmp SetChrBank1FromA
+000000r 2               
+000000r 2               	SetBankFromA:
+000000r 2               		clc
+000000r 2               		ora #$82			; mark as prg-rom
+000000r 2               		sta MMC5_PRGBank+4
+000000r 2               		rts
+000000r 2               
+000000r 2               	MapperReset:
+000000r 2               		;
+000000r 2               		; clear mapper state
+000000r 2               		;
+000000r 2               		sei
+000000r 2               		cld ;absolutely useless :)
+000000r 2               		ldx #$FF
+000000r 2               		txs
+000000r 2               		lda #%01000000         ; disable apu irq
+000000r 2               		sta $4017
+000000r 2               		lda #%10
+000000r 2               		sta MMC5_RAMProtect1
+000000r 2               		lda #%01
+000000r 2               		sta MMC5_RAMProtect2
+000000r 2               		lda #1
+000000r 2               		sta MMC5_CHRMode       ; use 1kb chr banking
+000000r 2               		lda #0
+000000r 2               		sta MMC5_PRGMode       ; use 32kb prg banking
+000000r 2               		lsr a
+000000r 2               		sta MMC5_PRGBank       ; use bank 0 for prg-ram
+000000r 2               		lda #%11
+000000r 2               		sta MMC5_ExRamMode
+000000r 2               		lda #BANK_LOADER
+000000r 2               		sta BANK_SELECTED
+000000r 2               		jsr SetBankFromA       ; set startup bank
+000000r 2               		lda #$44
+000000r 2               		sta MMC5_Nametables    ; set vertical mirroring
+000000r 2               		jmp $8000
+000000r 2               
+000000r 2               	StartBank:
+000000r 2               		;
+000000r 2               		; 0 Bank selected
+000000r 2               		;
+000000r 2               		sta BANK_SELECTED
+000000r 2               		ldx #$00
+000000r 2               		stx PPU_CTRL_REG1
+000000r 2               		stx PPU_CTRL_REG2
+000000r 2               		jsr SetBankFromA
+000000r 2               		jmp Start
+000000r 2               
+000000r 2               	IRQ:
+000000r 2               		sei
+000000r 2               		php
+000000r 2               		pha
+000000r 2               		lda MMC5_SLIRQ
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1      ; waste some time to get to the end of the scanline
+000000r 2               		lda Mirror_PPU_CTRL_REG1
+000000r 2               		and #%11110110           ;mask out sprite address and nametable
+000000r 2               		ora UseNtBase2400
+000000r 2               		sta Mirror_PPU_CTRL_REG1      ;update the register and its mirror
+000000r 2               		sta PPU_CTRL_REG1
+000000r 2               		lda HorizontalScroll
+000000r 2               		sta PPU_SCROLL_REG           ;set scroll regs for the screen under the status bar
+000000r 2               		lda #$00
+000000r 2               		sta PPU_SCROLL_REG
+000000r 2               		sta IRQAckFlag           ;indicate IRQ was acknowledged
+000000r 2               		tya                      ; waste some time to match 2j irq
+000000r 2               		ldy #$18                 ; ...
+000000r 2               	:   dey                      ; ...
+000000r 2               		bne :-                   ; ...
+000000r 2               		tay                      ; ...
+000000r 2               		pla
+000000r 2               		plp
+000000r 2               		cli
+000000r 2               		rti
+000000r 2               
+000000r 2               		.res $FFFA - *, $ea
+000000r 2               		;
+000000r 2               		; Interrupt table
+000000r 2               		;
+000000r 2               		.word NonMaskableInterrupt
+000000r 2               		.word MapperReset
+000000r 2               		.word IRQ
+000000r 2               
+000000r 2               .endmacro
+000000r 2               
+000000r 1               	.segment "bank6"
+000000r 1               	.org $8000
+008000  1               
+008000  1               scen_1_2G_HI_load_area:
+008000  1  A9 08        		lda #$08
+008002  1  8D 1A 07     		sta ScreenEdge_PageLoc
+008005  1  A9 09        		lda #$09
+008007  1  85 6D        		sta Player_PageLoc
+008009  1  A9 00        		lda #$00
+00800B  1  8D 5F 07     		sta WorldNumber
+00800E  1  A9 02        		lda #$02
+008010  1  8D 60 07     		sta AreaNumber
+008013  1  A9 01        		lda #$01
+008015  1  8D 5C 07     		sta LevelNumber
+008018  1  A9 D7        		lda #$D7
+00801A  1  8D D7 07     		sta FpgScrollTo
+00801D  1  60           		rts
+00801E  1               scen_1_2G_HI_Player_CollisionBits:
+00801E  1  FF 00 00 00  	.byte $FF, $00, $00, $00, $00, $00, $00
+008022  1  00 00 00     
+008025  1               scen_1_2G_HI_Player_X_Speed:
+008025  1  28 F8 F8 F8  	.byte $28, $F8, $F8, $F8, $F8, $08, $00
+008029  1  F8 08 00     
+00802C  1               scen_1_2G_HI_Player_State:
+00802C  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $04, $00
+008030  1  00 04 00     
+008033  1               scen_1_2G_HI_Player_Rel_XPos:
+008033  1  70 37 00 00  	.byte $70, $37, $00, $00, $4F, $BF, $00
+008037  1  4F BF 00     
+00803A  1               scen_1_2G_HI_Player_MovingDir:
+00803A  1  01 02 02 02  	.byte $01, $02, $02, $02, $02, $01, $00
+00803E  1  02 01 00     
+008041  1               scen_1_2G_HI_PseudoRandomBitReg:
+008041  1  A7 98 D7 E6  	.byte $A7, $98, $D7, $E6, $49, $85, $16
+008045  1  49 85 16     
+008048  1               scen_1_2G_HI_YPlatformTopYPos:
+008048  1  00 80 80 80  	.byte $00, $80, $80, $80, $80, $00, $00
+00804C  1  80 00 00     
+00804F  1               scen_1_2G_HI_SprObject_X_MoveForce:
+00804F  1  C0 00 80 80  	.byte $C0, $00, $80, $80, $80, $80, $00
+008053  1  80 80 00     
+008056  1               scen_1_2G_HI_Player_X_Position:
+008056  1  48 AC AC BC  	.byte $48, $AC, $AC, $BC, $BC, $0F, $E0
+00805A  1  BC 0F E0     
+00805D  1               scen_1_2G_HI_Player_OffscreenBits:
+00805D  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+008061  1  00 00 00     
+008064  1               scen_1_2G_HI_Enemy_ID:
+008064  1  26 26 27 27  	.byte $26, $26, $27, $27, $03, $00, $00
+008068  1  03 00 00     
+00806B  1               scen_1_2G_HI_Player_Y_Position:
+00806B  1  60 F2 7A F1  	.byte $60, $F2, $7A, $F1, $50, $B8, $E0
+00806F  1  50 B8 E0     
+008072  1               scen_1_2G_HI_Enemy_Flag:
+008072  1  01 01 01 01  	.byte $01, $01, $01, $01, $01, $00, $00
+008076  1  01 00 00     
+008079  1               scen_1_2G_HI_EnemyOffscrBitsMasked:
+008079  1  04 04 04 04  	.byte $04, $04, $04, $04, $00, $00, $00
+00807D  1  00 00 00     
+008080  1               scen_1_2G_HI_Player_YMF_Dummy:
+008080  1  78 4C 01 51  	.byte $78, $4C, $01, $51, $70, $78, $00
+008084  1  70 78 00     
+008087  1               scen_1_2G_HI_YPlatformCenterYPos:
+008087  1  F8 F8 F8 F8  	.byte $F8, $F8, $F8, $F8, $08, $00, $00
+00808B  1  08 00 00     
+00808E  1               scen_1_2G_HI_Player_Rel_YPos:
+00808E  1  B0 B8 00 00  	.byte $B0, $B8, $00, $00, $90, $00, $00
+008092  1  90 00 00     
+008095  1               scen_1_2G_HI_Player_Y_HighPos:
+008095  1  01 01 01 01  	.byte $01, $01, $01, $01, $01, $01, $01
+008099  1  01 01 01     
+00809C  1               scen_1_2G_HI_Player_Y_Speed:
+00809C  1  00 FF FF 00  	.byte $00, $FF, $FF, $00, $00, $00, $00
+0080A0  1  00 00 00     
+0080A3  1               scen_1_2G_HI_Player_SprAttrib:
+0080A3  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+0080A7  1  00 00 00     
+0080AA  1               scen_1_2G_HI_Player_Y_MoveForce:
+0080AA  1  00 10 10 F0  	.byte $00, $10, $10, $F0, $F0, $00, $00
+0080AE  1  F0 00 00     
+0080B1  1               scen_1_2G_HI_PlatformCollisionFlag:
+0080B1  1  FF FF FF FF  	.byte $FF, $FF, $FF, $FF, $00, $00, $00
+0080B5  1  00 00 00     
+0080B8  1               scen_1_2G_HI_Player_BoundBoxCtrl:
+0080B8  1  01 06 06 06  	.byte $01, $06, $06, $06, $06, $03, $00
+0080BC  1  06 03 00     
+0080BF  1               scen_1_2G_HI_SprObject_PageLoc:
+0080BF  1  09 09 09 08  	.byte $09, $09, $09, $08, $08, $09, $09
+0080C3  1  08 09 09     
+0080C6  1               scen_1_2G_HI_Timers:
+0080C6  1  00 01 00 05  	.byte $00, $01, $00, $05, $00, $00, $00, $13, $00, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+0080CA  1  00 00 00 13  
+0080CE  1  00 18 00 00  
+0080DB  1               scen_1_2G_HI_BoundingBox_UL_XPos:
+0080DB  1  73 C4 7D D0  	.byte $73, $C4, $7D, $D0, $D4, $F3, $FF, $00, $D4, $7A, $FF, $87, $00, $F0, $14, $FD, $00, $4F, $14, $5C, $39, $C1, $45, $CD, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+0080DF  1  D4 F3 FF 00  
+0080E3  1  D4 7A FF 87  
+00812F  1               
+00812F  1               scen_1_2G_HI_reset:
+00812F  1  A5 02        		lda $2
+008131  1  18           		clc
+008132  1  69 68        		adc #$68
+008134  1  85 E9        		sta EnemyDataLow
+008136  1  A5 03        		lda $3
+008138  1  69 03        		adc #$03
+00813A  1  85 EA        		sta EnemyDataHigh
+00813C  1  A2 06        		ldx #$06
+00813E  1               scen_1_2G_HI_init_len7_0:
+00813E  1  BD 1E 80     		lda scen_1_2G_HI_Player_CollisionBits, x
+008141  1  9D 90 04     		sta Player_CollisionBits, x
+008144  1  BD 25 80     		lda scen_1_2G_HI_Player_X_Speed, x
+008147  1  95 57        		sta Player_X_Speed, x
+008149  1  BD 2C 80     		lda scen_1_2G_HI_Player_State, x
+00814C  1  95 1D        		sta Player_State, x
+00814E  1  BD 33 80     		lda scen_1_2G_HI_Player_Rel_XPos, x
+008151  1  9D AD 03     		sta Player_Rel_XPos, x
+008154  1  BD 3A 80     		lda scen_1_2G_HI_Player_MovingDir, x
+008157  1  95 45        		sta Player_MovingDir, x
+008159  1  BD 41 80     		lda scen_1_2G_HI_PseudoRandomBitReg, x
+00815C  1  9D A7 07     		sta PseudoRandomBitReg, x
+00815F  1  BD 48 80     		lda scen_1_2G_HI_YPlatformTopYPos, x
+008162  1  9D 01 04     		sta YPlatformTopYPos, x
+008165  1  BD 4F 80     		lda scen_1_2G_HI_SprObject_X_MoveForce, x
+008168  1  9D 00 04     		sta SprObject_X_MoveForce, x
+00816B  1  BD 56 80     		lda scen_1_2G_HI_Player_X_Position, x
+00816E  1  95 86        		sta Player_X_Position, x
+008170  1  BD 5D 80     		lda scen_1_2G_HI_Player_OffscreenBits, x
+008173  1  9D D0 03     		sta Player_OffscreenBits, x
+008176  1  BD 64 80     		lda scen_1_2G_HI_Enemy_ID, x
+008179  1  95 16        		sta Enemy_ID, x
+00817B  1  BD 6B 80     		lda scen_1_2G_HI_Player_Y_Position, x
+00817E  1  95 CE        		sta Player_Y_Position, x
+008180  1  BD 72 80     		lda scen_1_2G_HI_Enemy_Flag, x
+008183  1  95 0F        		sta Enemy_Flag, x
+008185  1  BD 79 80     		lda scen_1_2G_HI_EnemyOffscrBitsMasked, x
+008188  1  9D D8 03     		sta EnemyOffscrBitsMasked, x
+00818B  1  BD 80 80     		lda scen_1_2G_HI_Player_YMF_Dummy, x
+00818E  1  9D 16 04     		sta Player_YMF_Dummy, x
+008191  1  BD 87 80     		lda scen_1_2G_HI_YPlatformCenterYPos, x
+008194  1  95 58        		sta YPlatformCenterYPos, x
+008196  1  BD 8E 80     		lda scen_1_2G_HI_Player_Rel_YPos, x
+008199  1  9D B8 03     		sta Player_Rel_YPos, x
+00819C  1  BD 95 80     		lda scen_1_2G_HI_Player_Y_HighPos, x
+00819F  1  95 B5        		sta Player_Y_HighPos, x
+0081A1  1  BD 9C 80     		lda scen_1_2G_HI_Player_Y_Speed, x
+0081A4  1  95 9F        		sta Player_Y_Speed, x
+0081A6  1  BD A3 80     		lda scen_1_2G_HI_Player_SprAttrib, x
+0081A9  1  9D C4 03     		sta Player_SprAttrib, x
+0081AC  1  CA           		dex
+0081AD  1  10 8F        		bpl scen_1_2G_HI_init_len7_0
+0081AF  1  A2 06        		ldx #$06
+0081B1  1               scen_1_2G_HI_init_len7_1:
+0081B1  1  BD AA 80     		lda scen_1_2G_HI_Player_Y_MoveForce, x
+0081B4  1  9D 33 04     		sta Player_Y_MoveForce, x
+0081B7  1  BD B1 80     		lda scen_1_2G_HI_PlatformCollisionFlag, x
+0081BA  1  9D A2 03     		sta PlatformCollisionFlag, x
+0081BD  1  BD B8 80     		lda scen_1_2G_HI_Player_BoundBoxCtrl, x
+0081C0  1  9D 99 04     		sta Player_BoundBoxCtrl, x
+0081C3  1  BD BF 80     		lda scen_1_2G_HI_SprObject_PageLoc, x
+0081C6  1  95 6D        		sta SprObject_PageLoc, x
+0081C8  1  CA           		dex
+0081C9  1  10 E6        		bpl scen_1_2G_HI_init_len7_1
+0081CB  1  A2 14        		ldx #$14
+0081CD  1               scen_1_2G_HI_init_len21_0:
+0081CD  1  BD C6 80     		lda scen_1_2G_HI_Timers, x
+0081D0  1  9D 80 07     		sta Timers, x
+0081D3  1  CA           		dex
+0081D4  1  10 F7        		bpl scen_1_2G_HI_init_len21_0
+0081D6  1  A2 53        		ldx #$53
+0081D8  1               scen_1_2G_HI_init_len84_0:
+0081D8  1  BD DB 80     		lda scen_1_2G_HI_BoundingBox_UL_XPos, x
+0081DB  1  9D AC 04     		sta BoundingBox_UL_XPos, x
+0081DE  1  CA           		dex
+0081DF  1  10 F7        		bpl scen_1_2G_HI_init_len84_0
+0081E1  1  A9 00        		lda #$00
+0081E3  1  8D 3B 07     		sta EnemyObjectPageSel
+0081E6  1  A9 D7        		lda #$D7
+0081E8  1  8D 1D 07     		sta ScreenRight_X_Pos
+0081EB  1  A9 05        		lda #$05
+0081ED  1  8D 7F 07     		sta IntervalTimerControl
+0081F0  1  A9 00        		lda #$00
+0081F2  1  8D CB 06     		sta EnemyFrenzyBuffer
+0081F5  1  A9 90        		lda #$90
+0081F7  1  8D 0A 07     		sta VerticalForceDown
+0081FA  1  A9 40        		lda #$40
+0081FC  1  8D 05 07     		sta Player_X_MoveForce
+0081FF  1  A9 00        		lda #$00
+008201  1  8D 01 07     		sta FrictionAdderHigh
+008204  1  A9 D8        		lda #$D8
+008206  1  8D 50 04     		sta MaximumLeftSpeed
+008209  1  A9 00        		lda #$00
+00820B  1  8D 56 07     		sta PlayerStatus
+00820E  1  A9 D8        		lda #$D8
+008210  1  8D 3F 07     		sta HorizontalScroll
+008213  1  A9 02        		lda #$02
+008215  1  8D FF 06     		sta Player_X_Scroll
+008218  1  A9 00        		lda #$00
+00821A  1  8D 0B 07     		sta PlayerChangeSizeFlag
+00821D  1  A9 01        		lda #$01
+00821F  1  8D 07 07     		sta JumpOrigin_Y_HighPos
+008222  1  A9 00        		lda #$00
+008224  1  8D 14 07     		sta CrouchingFlag
+008227  1  A9 70        		lda #$70
+008229  1  8D 55 07     		sta Player_Pos_ForScroll
+00822C  1  A9 01        		lda #$01
+00822E  1  85 33        		sta PlayerFacingDir
+008230  1  A9 EE        		lda #$EE
+008232  1  85 09        		sta FrameCounter
+008234  1  A9 02        		lda #$02
+008236  1  8D 75 07     		sta ScrollAmount
+008239  1  A9 90        		lda #$90
+00823B  1  8D 09 07     		sta VerticalForce
+00823E  1  A9 A4        		lda #$A4
+008240  1  8D 08 07     		sta JumpOrigin_Y_Position
+008243  1  A9 E4        		lda #$E4
+008245  1  8D 02 07     		sta FrictionAdderLow
+008248  1  A9 00        		lda #$00
+00824A  1  8D 47 07     		sta TimerControl
+00824D  1  A9 FF        		lda #$FF
+00824F  1  8D A0 03     		sta BalPlatformAlignment
+008252  1  A9 00        		lda #$00
+008254  1  8D 68 07     		sta ScrollFractional
+008257  1  A9 00        		lda #$00
+008259  1  8D 40 07     		sta VerticalScroll
+00825C  1  A9 09        		lda #$09
+00825E  1  8D 3A 07     		sta EnemyObjectPageLoc
+008261  1  A9 00        		lda #$00
+008263  1  8D 23 07     		sta ScrollLock
+008266  1  A9 18        		lda #$18
+008268  1  8D 3D 07     		sta ScrollThirtyTwo
+00826B  1  A9 01        		lda #$01
+00826D  1  8D 54 07     		sta PlayerSize
+008270  1  A9 09        		lda #$09
+008272  1  8D 1B 07     		sta ScreenRight_PageLoc
+008275  1  A9 D8        		lda #$D8
+008277  1  8D 1C 07     		sta ScreenLeft_X_Pos
+00827A  1  A9 28        		lda #$28
+00827C  1  8D 00 07     		sta Player_XSpeedAbsolute
+00827F  1  A9 2A        		lda #$2A
+008281  1  8D 39 07     		sta EnemyDataOffset
+008284  1  A9 01        		lda #$01
+008286  1  8D 0D 07     		sta PlayerAnimCtrl
+008289  1  A9 02        		lda #$02
+00828B  1  8D 0C 07     		sta PlayerAnimTimerSet
+00828E  1  A9 00        		lda #$00
+008290  1  8D 04 07     		sta SwimmingFlag
+008293  1  A9 28        		lda #$28
+008295  1  8D 03 07     		sta RunningSpeed
+008298  1  A9 00        		lda #$00
+00829A  1  8D A1 03     		sta Platform_X_Scroll
+00829D  1  A9 28        		lda #$28
+00829F  1  8D 56 04     		sta MaximumRightSpeed
+0082A2  1  A9 00        		lda #$00
+0082A4  1  8D CD 06     		sta EnemyFrenzyQueue
+0082A7  1  A9 01        		lda #$01
+0082A9  1  8D 06 07     		sta DiffToHaltJump
+0082AC  1  60           		rts
+0082AD  1               scen_1_2G_HI_ruleset0:
+0082AD  1  A4 09        		ldy FrameCounter
+0082AF  1  AD FC 06     		lda SavedJoypadBits
+0082B2  1  29 C3        		and #$C3
+0082B4  1               scen_1_2G_HI_ruleset0_rule0:
+0082B4  1  C0 23        		cpy #$23
+0082B6  1  D0 12        		bne scen_1_2G_HI_ruleset0_rule1
+0082B8  1  A6 86        		ldx Player_X_Position
+0082BA  1  E0 CA        		cpx #$CA
+0082BC  1  F0 03        		beq scen_1_2G_HI_ruleset0_rule0_y
+0082BE  1  4C 6C 8B     		jmp fpg_failed_pos_x
+0082C1  1               scen_1_2G_HI_ruleset0_rule0_y:
+0082C1  1  A6 CE        		ldx Player_Y_Position
+0082C3  1  E0 A1        		cpx #$A1
+0082C5  1  F0 03        		beq scen_1_2G_HI_ruleset0_rule1
+0082C7  1  4C 79 8B     		jmp fpg_failed_pos_y
+0082CA  1               scen_1_2G_HI_ruleset0_rule1:
+0082CA  1  C0 23        		cpy #$23
+0082CC  1  30 0D        		bmi scen_1_2G_HI_ruleset0_rule33
+0082CE  1  C0 43        		cpy #$43
+0082D0  1  10 09        		bpl scen_1_2G_HI_ruleset0_rule33
+0082D2  1  C9 C1        		cmp #$C1
+0082D4  1  F0 05        		beq scen_1_2G_HI_ruleset0_rule33
+0082D6  1  A9 C1        		lda #$C1
+0082D8  1  4C 86 8B     		jmp fpg_failed_input
+0082DB  1               scen_1_2G_HI_ruleset0_rule33:
+0082DB  1  C0 54        		cpy #$54
+0082DD  1  D0 09        		bne scen_1_2G_HI_ruleset0_rule34
+0082DF  1  C9 01        		cmp #$01
+0082E1  1  F0 05        		beq scen_1_2G_HI_ruleset0_rule34
+0082E3  1  A9 01        		lda #$01
+0082E5  1  4C 86 8B     		jmp fpg_failed_input
+0082E8  1               scen_1_2G_HI_ruleset0_rule34:
+0082E8  1  C0 54        		cpy #$54
+0082EA  1  D0 12        		bne scen_1_2G_HI_ruleset0_rule35
+0082EC  1  A6 86        		ldx Player_X_Position
+0082EE  1  E0 45        		cpx #$45
+0082F0  1  F0 03        		beq scen_1_2G_HI_ruleset0_rule34_y
+0082F2  1  4C 6C 8B     		jmp fpg_failed_pos_x
+0082F5  1               scen_1_2G_HI_ruleset0_rule34_y:
+0082F5  1  A6 CE        		ldx Player_Y_Position
+0082F7  1  E0 80        		cpx #$80
+0082F9  1  F0 03        		beq scen_1_2G_HI_ruleset0_rule35
+0082FB  1  4C 79 8B     		jmp fpg_failed_pos_y
+0082FE  1               scen_1_2G_HI_ruleset0_rule35:
+0082FE  1  C0 55        		cpy #$55
+008300  1  D0 0E        		bne scen_1_2G_HI_ruleset0_rule36
+008302  1  29 FE        		and #$FE
+008304  1  C9 80        		cmp #$80
+008306  1  F0 05        		beq scen_1_2G_HI_ruleset0_rule36_restore_input
+008308  1  A9 80        		lda #$80
+00830A  1  4C 86 8B     		jmp fpg_failed_input
+00830D  1               scen_1_2G_HI_ruleset0_rule36_restore_input:
+00830D  1  AD FC 06     		lda SavedJoypadBits
+008310  1               scen_1_2G_HI_ruleset0_rule36:
+008310  1  C0 56        		cpy #$56
+008312  1  30 12        		bmi scen_1_2G_HI_ruleset0_rule44
+008314  1  C0 5E        		cpy #$5E
+008316  1  10 0E        		bpl scen_1_2G_HI_ruleset0_rule44
+008318  1  29 FE        		and #$FE
+00831A  1  C9 00        		cmp #$00
+00831C  1  F0 05        		beq scen_1_2G_HI_ruleset0_rule44_restore_input
+00831E  1  A9 00        		lda #$00
+008320  1  4C 86 8B     		jmp fpg_failed_input
+008323  1               scen_1_2G_HI_ruleset0_rule44_restore_input:
+008323  1  AD FC 06     		lda SavedJoypadBits
+008326  1               scen_1_2G_HI_ruleset0_rule44:
+008326  1  C0 5E        		cpy #$5E
+008328  1  30 0D        		bmi scen_1_2G_HI_ruleset0_rule49
+00832A  1  C0 63        		cpy #$63
+00832C  1  10 09        		bpl scen_1_2G_HI_ruleset0_rule49
+00832E  1  C9 02        		cmp #$02
+008330  1  F0 05        		beq scen_1_2G_HI_ruleset0_rule49
+008332  1  A9 02        		lda #$02
+008334  1  4C 86 8B     		jmp fpg_failed_input
+008337  1               scen_1_2G_HI_ruleset0_rule49:
+008337  1  C0 86        		cpy #$86
+008339  1  D0 09        		bne scen_1_2G_HI_ruleset0_rule50
+00833B  1  A6 CE        		ldx Player_Y_Position
+00833D  1  E0 70        		cpx #$70
+00833F  1  F0 03        		beq scen_1_2G_HI_ruleset0_rule50
+008341  1  4C 79 8B     		jmp fpg_failed_pos_y
+008344  1               scen_1_2G_HI_ruleset0_rule50:
+008344  1  C0 86        		cpy #$86
+008346  1  D0 09        		bne scen_1_2G_HI_ruleset0_rule51
+008348  1  A6 86        		ldx Player_X_Position
+00834A  1  E0 69        		cpx #$69
+00834C  1  10 03        		bpl scen_1_2G_HI_ruleset0_rule51
+00834E  1  4C 6C 8B     		jmp fpg_failed_pos_x
+008351  1               scen_1_2G_HI_ruleset0_rule51:
+008351  1  C0 87        		cpy #$87
+008353  1  D0 03        		bne scen_1_2G_HI_ruleset0_rule52
+008355  1  4C 9F 8B     		jmp fpg_win
+008358  1               scen_1_2G_HI_ruleset0_rule52:
+008358  1  60           		rts
+008359  1               scen_1_2G_HI_rulesets:
+008359  1  AD 82        	.word scen_1_2G_HI_ruleset0
+00835B  1               scen_1_2G_HI_validate:
+00835B  1  AD 17 07     		lda FpgRuleset
+00835E  1  0A           		asl
+00835F  1  A8           		tay
+008360  1  B9 59 83     		lda scen_1_2G_HI_rulesets, y
+008363  1  85 00        		sta $0
+008365  1  B9 5A 83     		lda scen_1_2G_HI_rulesets+1, y
+008368  1  85 01        		sta $1
+00836A  1  6C 00 00     		jmp ($0)
+00836D  1               
+00836D  1               scen_1_2G_LO_load_area:
+00836D  1  A9 08        		lda #$08
+00836F  1  8D 1A 07     		sta ScreenEdge_PageLoc
+008372  1  A9 09        		lda #$09
+008374  1  85 6D        		sta Player_PageLoc
+008376  1  A9 00        		lda #$00
+008378  1  8D 5F 07     		sta WorldNumber
+00837B  1  A9 02        		lda #$02
+00837D  1  8D 60 07     		sta AreaNumber
+008380  1  A9 01        		lda #$01
+008382  1  8D 5C 07     		sta LevelNumber
+008385  1  A9 D7        		lda #$D7
+008387  1  8D D7 07     		sta FpgScrollTo
+00838A  1  60           		rts
+00838B  1               scen_1_2G_LO_Player_CollisionBits:
+00838B  1  FF 00 00 00  	.byte $FF, $00, $00, $00, $00, $00, $00
+00838F  1  00 00 00     
+008392  1               scen_1_2G_LO_Player_X_Speed:
+008392  1  28 F8 F8 F8  	.byte $28, $F8, $F8, $F8, $F8, $08, $00
+008396  1  F8 08 00     
+008399  1               scen_1_2G_LO_Player_State:
+008399  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $04, $00
+00839D  1  00 04 00     
+0083A0  1               scen_1_2G_LO_Player_Rel_XPos:
+0083A0  1  70 37 00 00  	.byte $70, $37, $00, $00, $4F, $BF, $00
+0083A4  1  4F BF 00     
+0083A7  1               scen_1_2G_LO_Player_MovingDir:
+0083A7  1  01 02 02 02  	.byte $01, $02, $02, $02, $02, $01, $00
+0083AB  1  02 01 00     
+0083AE  1               scen_1_2G_LO_PseudoRandomBitReg:
+0083AE  1  A7 98 D7 E6  	.byte $A7, $98, $D7, $E6, $49, $85, $16
+0083B2  1  49 85 16     
+0083B5  1               scen_1_2G_LO_YPlatformTopYPos:
+0083B5  1  00 80 80 80  	.byte $00, $80, $80, $80, $80, $00, $00
+0083B9  1  80 00 00     
+0083BC  1               scen_1_2G_LO_SprObject_X_MoveForce:
+0083BC  1  C0 00 80 80  	.byte $C0, $00, $80, $80, $80, $80, $00
+0083C0  1  80 80 00     
+0083C3  1               scen_1_2G_LO_Player_X_Position:
+0083C3  1  48 AC AC BC  	.byte $48, $AC, $AC, $BC, $BC, $0F, $E0
+0083C7  1  BC 0F E0     
+0083CA  1               scen_1_2G_LO_Player_OffscreenBits:
+0083CA  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+0083CE  1  00 00 00     
+0083D1  1               scen_1_2G_LO_Enemy_ID:
+0083D1  1  26 26 27 27  	.byte $26, $26, $27, $27, $03, $00, $00
+0083D5  1  03 00 00     
+0083D8  1               scen_1_2G_LO_Player_Y_Position:
+0083D8  1  B0 F2 7A F1  	.byte $B0, $F2, $7A, $F1, $50, $B8, $E0
+0083DC  1  50 B8 E0     
+0083DF  1               scen_1_2G_LO_Enemy_Flag:
+0083DF  1  01 01 01 01  	.byte $01, $01, $01, $01, $01, $00, $00
+0083E3  1  01 00 00     
+0083E6  1               scen_1_2G_LO_EnemyOffscrBitsMasked:
+0083E6  1  04 04 04 04  	.byte $04, $04, $04, $04, $00, $00, $00
+0083EA  1  00 00 00     
+0083ED  1               scen_1_2G_LO_Player_YMF_Dummy:
+0083ED  1  78 4C 01 51  	.byte $78, $4C, $01, $51, $70, $78, $00
+0083F1  1  70 78 00     
+0083F4  1               scen_1_2G_LO_YPlatformCenterYPos:
+0083F4  1  F8 F8 F8 F8  	.byte $F8, $F8, $F8, $F8, $08, $00, $00
+0083F8  1  08 00 00     
+0083FB  1               scen_1_2G_LO_Player_Rel_YPos:
+0083FB  1  B0 B8 00 00  	.byte $B0, $B8, $00, $00, $90, $00, $00
+0083FF  1  90 00 00     
+008402  1               scen_1_2G_LO_Player_Y_HighPos:
+008402  1  01 01 01 01  	.byte $01, $01, $01, $01, $01, $01, $01
+008406  1  01 01 01     
+008409  1               scen_1_2G_LO_Player_Y_Speed:
+008409  1  00 FF FF 00  	.byte $00, $FF, $FF, $00, $00, $00, $00
+00840D  1  00 00 00     
+008410  1               scen_1_2G_LO_Player_SprAttrib:
+008410  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+008414  1  00 00 00     
+008417  1               scen_1_2G_LO_Player_Y_MoveForce:
+008417  1  00 10 10 F0  	.byte $00, $10, $10, $F0, $F0, $00, $00
+00841B  1  F0 00 00     
+00841E  1               scen_1_2G_LO_PlatformCollisionFlag:
+00841E  1  FF FF FF FF  	.byte $FF, $FF, $FF, $FF, $00, $00, $00
+008422  1  00 00 00     
+008425  1               scen_1_2G_LO_Player_BoundBoxCtrl:
+008425  1  01 06 06 06  	.byte $01, $06, $06, $06, $06, $03, $00
+008429  1  06 03 00     
+00842C  1               scen_1_2G_LO_SprObject_PageLoc:
+00842C  1  09 09 09 08  	.byte $09, $09, $09, $08, $08, $09, $09
+008430  1  08 09 09     
+008433  1               scen_1_2G_LO_Timers:
+008433  1  00 01 00 05  	.byte $00, $01, $00, $05, $00, $00, $00, $13, $00, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+008437  1  00 00 00 13  
+00843B  1  00 18 00 00  
+008448  1               scen_1_2G_LO_BoundingBox_UL_XPos:
+008448  1  73 C4 7D D0  	.byte $73, $C4, $7D, $D0, $D4, $F3, $FF, $00, $D4, $7A, $FF, $87, $00, $F0, $14, $FD, $00, $4F, $14, $5C, $39, $C1, $45, $CD, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+00844C  1  D4 F3 FF 00  
+008450  1  D4 7A FF 87  
+00849C  1               
+00849C  1               scen_1_2G_LO_reset:
+00849C  1  A5 02        		lda $2
+00849E  1  18           		clc
+00849F  1  69 68        		adc #$68
+0084A1  1  85 E9        		sta EnemyDataLow
+0084A3  1  A5 03        		lda $3
+0084A5  1  69 03        		adc #$03
+0084A7  1  85 EA        		sta EnemyDataHigh
+0084A9  1  A2 06        		ldx #$06
+0084AB  1               scen_1_2G_LO_init_len7_0:
+0084AB  1  BD 8B 83     		lda scen_1_2G_LO_Player_CollisionBits, x
+0084AE  1  9D 90 04     		sta Player_CollisionBits, x
+0084B1  1  BD 92 83     		lda scen_1_2G_LO_Player_X_Speed, x
+0084B4  1  95 57        		sta Player_X_Speed, x
+0084B6  1  BD 99 83     		lda scen_1_2G_LO_Player_State, x
+0084B9  1  95 1D        		sta Player_State, x
+0084BB  1  BD A0 83     		lda scen_1_2G_LO_Player_Rel_XPos, x
+0084BE  1  9D AD 03     		sta Player_Rel_XPos, x
+0084C1  1  BD A7 83     		lda scen_1_2G_LO_Player_MovingDir, x
+0084C4  1  95 45        		sta Player_MovingDir, x
+0084C6  1  BD AE 83     		lda scen_1_2G_LO_PseudoRandomBitReg, x
+0084C9  1  9D A7 07     		sta PseudoRandomBitReg, x
+0084CC  1  BD B5 83     		lda scen_1_2G_LO_YPlatformTopYPos, x
+0084CF  1  9D 01 04     		sta YPlatformTopYPos, x
+0084D2  1  BD BC 83     		lda scen_1_2G_LO_SprObject_X_MoveForce, x
+0084D5  1  9D 00 04     		sta SprObject_X_MoveForce, x
+0084D8  1  BD C3 83     		lda scen_1_2G_LO_Player_X_Position, x
+0084DB  1  95 86        		sta Player_X_Position, x
+0084DD  1  BD CA 83     		lda scen_1_2G_LO_Player_OffscreenBits, x
+0084E0  1  9D D0 03     		sta Player_OffscreenBits, x
+0084E3  1  BD D1 83     		lda scen_1_2G_LO_Enemy_ID, x
+0084E6  1  95 16        		sta Enemy_ID, x
+0084E8  1  BD D8 83     		lda scen_1_2G_LO_Player_Y_Position, x
+0084EB  1  95 CE        		sta Player_Y_Position, x
+0084ED  1  BD DF 83     		lda scen_1_2G_LO_Enemy_Flag, x
+0084F0  1  95 0F        		sta Enemy_Flag, x
+0084F2  1  BD E6 83     		lda scen_1_2G_LO_EnemyOffscrBitsMasked, x
+0084F5  1  9D D8 03     		sta EnemyOffscrBitsMasked, x
+0084F8  1  BD ED 83     		lda scen_1_2G_LO_Player_YMF_Dummy, x
+0084FB  1  9D 16 04     		sta Player_YMF_Dummy, x
+0084FE  1  BD F4 83     		lda scen_1_2G_LO_YPlatformCenterYPos, x
+008501  1  95 58        		sta YPlatformCenterYPos, x
+008503  1  BD FB 83     		lda scen_1_2G_LO_Player_Rel_YPos, x
+008506  1  9D B8 03     		sta Player_Rel_YPos, x
+008509  1  BD 02 84     		lda scen_1_2G_LO_Player_Y_HighPos, x
+00850C  1  95 B5        		sta Player_Y_HighPos, x
+00850E  1  BD 09 84     		lda scen_1_2G_LO_Player_Y_Speed, x
+008511  1  95 9F        		sta Player_Y_Speed, x
+008513  1  BD 10 84     		lda scen_1_2G_LO_Player_SprAttrib, x
+008516  1  9D C4 03     		sta Player_SprAttrib, x
+008519  1  CA           		dex
+00851A  1  10 8F        		bpl scen_1_2G_LO_init_len7_0
+00851C  1  A2 06        		ldx #$06
+00851E  1               scen_1_2G_LO_init_len7_1:
+00851E  1  BD 17 84     		lda scen_1_2G_LO_Player_Y_MoveForce, x
+008521  1  9D 33 04     		sta Player_Y_MoveForce, x
+008524  1  BD 1E 84     		lda scen_1_2G_LO_PlatformCollisionFlag, x
+008527  1  9D A2 03     		sta PlatformCollisionFlag, x
+00852A  1  BD 25 84     		lda scen_1_2G_LO_Player_BoundBoxCtrl, x
+00852D  1  9D 99 04     		sta Player_BoundBoxCtrl, x
+008530  1  BD 2C 84     		lda scen_1_2G_LO_SprObject_PageLoc, x
+008533  1  95 6D        		sta SprObject_PageLoc, x
+008535  1  CA           		dex
+008536  1  10 E6        		bpl scen_1_2G_LO_init_len7_1
+008538  1  A2 14        		ldx #$14
+00853A  1               scen_1_2G_LO_init_len21_0:
+00853A  1  BD 33 84     		lda scen_1_2G_LO_Timers, x
+00853D  1  9D 80 07     		sta Timers, x
+008540  1  CA           		dex
+008541  1  10 F7        		bpl scen_1_2G_LO_init_len21_0
+008543  1  A2 53        		ldx #$53
+008545  1               scen_1_2G_LO_init_len84_0:
+008545  1  BD 48 84     		lda scen_1_2G_LO_BoundingBox_UL_XPos, x
+008548  1  9D AC 04     		sta BoundingBox_UL_XPos, x
+00854B  1  CA           		dex
+00854C  1  10 F7        		bpl scen_1_2G_LO_init_len84_0
+00854E  1  A9 00        		lda #$00
+008550  1  8D 3B 07     		sta EnemyObjectPageSel
+008553  1  A9 D7        		lda #$D7
+008555  1  8D 1D 07     		sta ScreenRight_X_Pos
+008558  1  A9 05        		lda #$05
+00855A  1  8D 7F 07     		sta IntervalTimerControl
+00855D  1  A9 00        		lda #$00
+00855F  1  8D CB 06     		sta EnemyFrenzyBuffer
+008562  1  A9 90        		lda #$90
+008564  1  8D 0A 07     		sta VerticalForceDown
+008567  1  A9 40        		lda #$40
+008569  1  8D 05 07     		sta Player_X_MoveForce
+00856C  1  A9 00        		lda #$00
+00856E  1  8D 01 07     		sta FrictionAdderHigh
+008571  1  A9 D8        		lda #$D8
+008573  1  8D 50 04     		sta MaximumLeftSpeed
+008576  1  A9 00        		lda #$00
+008578  1  8D 56 07     		sta PlayerStatus
+00857B  1  A9 D8        		lda #$D8
+00857D  1  8D 3F 07     		sta HorizontalScroll
+008580  1  A9 02        		lda #$02
+008582  1  8D FF 06     		sta Player_X_Scroll
+008585  1  A9 00        		lda #$00
+008587  1  8D 0B 07     		sta PlayerChangeSizeFlag
+00858A  1  A9 01        		lda #$01
+00858C  1  8D 07 07     		sta JumpOrigin_Y_HighPos
+00858F  1  A9 00        		lda #$00
+008591  1  8D 14 07     		sta CrouchingFlag
+008594  1  A9 70        		lda #$70
+008596  1  8D 55 07     		sta Player_Pos_ForScroll
+008599  1  A9 01        		lda #$01
+00859B  1  85 33        		sta PlayerFacingDir
+00859D  1  A9 EE        		lda #$EE
+00859F  1  85 09        		sta FrameCounter
+0085A1  1  A9 02        		lda #$02
+0085A3  1  8D 75 07     		sta ScrollAmount
+0085A6  1  A9 90        		lda #$90
+0085A8  1  8D 09 07     		sta VerticalForce
+0085AB  1  A9 A4        		lda #$A4
+0085AD  1  8D 08 07     		sta JumpOrigin_Y_Position
+0085B0  1  A9 E4        		lda #$E4
+0085B2  1  8D 02 07     		sta FrictionAdderLow
+0085B5  1  A9 00        		lda #$00
+0085B7  1  8D 47 07     		sta TimerControl
+0085BA  1  A9 FF        		lda #$FF
+0085BC  1  8D A0 03     		sta BalPlatformAlignment
+0085BF  1  A9 00        		lda #$00
+0085C1  1  8D 68 07     		sta ScrollFractional
+0085C4  1  A9 00        		lda #$00
+0085C6  1  8D 40 07     		sta VerticalScroll
+0085C9  1  A9 09        		lda #$09
+0085CB  1  8D 3A 07     		sta EnemyObjectPageLoc
+0085CE  1  A9 00        		lda #$00
+0085D0  1  8D 23 07     		sta ScrollLock
+0085D3  1  A9 18        		lda #$18
+0085D5  1  8D 3D 07     		sta ScrollThirtyTwo
+0085D8  1  A9 01        		lda #$01
+0085DA  1  8D 54 07     		sta PlayerSize
+0085DD  1  A9 09        		lda #$09
+0085DF  1  8D 1B 07     		sta ScreenRight_PageLoc
+0085E2  1  A9 D8        		lda #$D8
+0085E4  1  8D 1C 07     		sta ScreenLeft_X_Pos
+0085E7  1  A9 28        		lda #$28
+0085E9  1  8D 00 07     		sta Player_XSpeedAbsolute
+0085EC  1  A9 2A        		lda #$2A
+0085EE  1  8D 39 07     		sta EnemyDataOffset
+0085F1  1  A9 01        		lda #$01
+0085F3  1  8D 0D 07     		sta PlayerAnimCtrl
+0085F6  1  A9 02        		lda #$02
+0085F8  1  8D 0C 07     		sta PlayerAnimTimerSet
+0085FB  1  A9 00        		lda #$00
+0085FD  1  8D 04 07     		sta SwimmingFlag
+008600  1  A9 28        		lda #$28
+008602  1  8D 03 07     		sta RunningSpeed
+008605  1  A9 00        		lda #$00
+008607  1  8D A1 03     		sta Platform_X_Scroll
+00860A  1  A9 28        		lda #$28
+00860C  1  8D 56 04     		sta MaximumRightSpeed
+00860F  1  A9 00        		lda #$00
+008611  1  8D CD 06     		sta EnemyFrenzyQueue
+008614  1  A9 01        		lda #$01
+008616  1  8D 06 07     		sta DiffToHaltJump
+008619  1  60           		rts
+00861A  1               scen_1_2G_LO_ruleset0:
+00861A  1  A4 09        		ldy FrameCounter
+00861C  1  AD FC 06     		lda SavedJoypadBits
+00861F  1  29 C3        		and #$C3
+008621  1               scen_1_2G_LO_ruleset0_rule0:
+008621  1  C0 23        		cpy #$23
+008623  1  D0 12        		bne scen_1_2G_LO_ruleset0_rule1
+008625  1  A6 86        		ldx Player_X_Position
+008627  1  E0 CA        		cpx #$CA
+008629  1  F0 03        		beq scen_1_2G_LO_ruleset0_rule0_y
+00862B  1  4C 6C 8B     		jmp fpg_failed_pos_x
+00862E  1               scen_1_2G_LO_ruleset0_rule0_y:
+00862E  1  A6 CE        		ldx Player_Y_Position
+008630  1  E0 A1        		cpx #$A1
+008632  1  F0 03        		beq scen_1_2G_LO_ruleset0_rule1
+008634  1  4C 79 8B     		jmp fpg_failed_pos_y
+008637  1               scen_1_2G_LO_ruleset0_rule1:
+008637  1  C0 23        		cpy #$23
+008639  1  30 0D        		bmi scen_1_2G_LO_ruleset0_rule33
+00863B  1  C0 43        		cpy #$43
+00863D  1  10 09        		bpl scen_1_2G_LO_ruleset0_rule33
+00863F  1  C9 C1        		cmp #$C1
+008641  1  F0 05        		beq scen_1_2G_LO_ruleset0_rule33
+008643  1  A9 C1        		lda #$C1
+008645  1  4C 86 8B     		jmp fpg_failed_input
+008648  1               scen_1_2G_LO_ruleset0_rule33:
+008648  1  C0 54        		cpy #$54
+00864A  1  D0 09        		bne scen_1_2G_LO_ruleset0_rule34
+00864C  1  C9 01        		cmp #$01
+00864E  1  F0 05        		beq scen_1_2G_LO_ruleset0_rule34
+008650  1  A9 01        		lda #$01
+008652  1  4C 86 8B     		jmp fpg_failed_input
+008655  1               scen_1_2G_LO_ruleset0_rule34:
+008655  1  C0 54        		cpy #$54
+008657  1  D0 12        		bne scen_1_2G_LO_ruleset0_rule35
+008659  1  A6 86        		ldx Player_X_Position
+00865B  1  E0 45        		cpx #$45
+00865D  1  F0 03        		beq scen_1_2G_LO_ruleset0_rule34_y
+00865F  1  4C 6C 8B     		jmp fpg_failed_pos_x
+008662  1               scen_1_2G_LO_ruleset0_rule34_y:
+008662  1  A6 CE        		ldx Player_Y_Position
+008664  1  E0 80        		cpx #$80
+008666  1  F0 03        		beq scen_1_2G_LO_ruleset0_rule35
+008668  1  4C 79 8B     		jmp fpg_failed_pos_y
+00866B  1               scen_1_2G_LO_ruleset0_rule35:
+00866B  1  C0 55        		cpy #$55
+00866D  1  D0 0E        		bne scen_1_2G_LO_ruleset0_rule36
+00866F  1  29 FE        		and #$FE
+008671  1  C9 80        		cmp #$80
+008673  1  F0 05        		beq scen_1_2G_LO_ruleset0_rule36_restore_input
+008675  1  A9 80        		lda #$80
+008677  1  4C 86 8B     		jmp fpg_failed_input
+00867A  1               scen_1_2G_LO_ruleset0_rule36_restore_input:
+00867A  1  AD FC 06     		lda SavedJoypadBits
+00867D  1               scen_1_2G_LO_ruleset0_rule36:
+00867D  1  C0 56        		cpy #$56
+00867F  1  30 12        		bmi scen_1_2G_LO_ruleset0_rule44
+008681  1  C0 5E        		cpy #$5E
+008683  1  10 0E        		bpl scen_1_2G_LO_ruleset0_rule44
+008685  1  29 FE        		and #$FE
+008687  1  C9 00        		cmp #$00
+008689  1  F0 05        		beq scen_1_2G_LO_ruleset0_rule44_restore_input
+00868B  1  A9 00        		lda #$00
+00868D  1  4C 86 8B     		jmp fpg_failed_input
+008690  1               scen_1_2G_LO_ruleset0_rule44_restore_input:
+008690  1  AD FC 06     		lda SavedJoypadBits
+008693  1               scen_1_2G_LO_ruleset0_rule44:
+008693  1  C0 5E        		cpy #$5E
+008695  1  30 0D        		bmi scen_1_2G_LO_ruleset0_rule49
+008697  1  C0 63        		cpy #$63
+008699  1  10 09        		bpl scen_1_2G_LO_ruleset0_rule49
+00869B  1  C9 02        		cmp #$02
+00869D  1  F0 05        		beq scen_1_2G_LO_ruleset0_rule49
+00869F  1  A9 02        		lda #$02
+0086A1  1  4C 86 8B     		jmp fpg_failed_input
+0086A4  1               scen_1_2G_LO_ruleset0_rule49:
+0086A4  1  C0 86        		cpy #$86
+0086A6  1  D0 09        		bne scen_1_2G_LO_ruleset0_rule50
+0086A8  1  A6 CE        		ldx Player_Y_Position
+0086AA  1  E0 70        		cpx #$70
+0086AC  1  F0 03        		beq scen_1_2G_LO_ruleset0_rule50
+0086AE  1  4C 79 8B     		jmp fpg_failed_pos_y
+0086B1  1               scen_1_2G_LO_ruleset0_rule50:
+0086B1  1  C0 86        		cpy #$86
+0086B3  1  D0 09        		bne scen_1_2G_LO_ruleset0_rule51
+0086B5  1  A6 86        		ldx Player_X_Position
+0086B7  1  E0 69        		cpx #$69
+0086B9  1  10 03        		bpl scen_1_2G_LO_ruleset0_rule51
+0086BB  1  4C 6C 8B     		jmp fpg_failed_pos_x
+0086BE  1               scen_1_2G_LO_ruleset0_rule51:
+0086BE  1  C0 87        		cpy #$87
+0086C0  1  D0 03        		bne scen_1_2G_LO_ruleset0_rule52
+0086C2  1  4C 9F 8B     		jmp fpg_win
+0086C5  1               scen_1_2G_LO_ruleset0_rule52:
+0086C5  1  60           		rts
+0086C6  1               scen_1_2G_LO_rulesets:
+0086C6  1  1A 86        	.word scen_1_2G_LO_ruleset0
+0086C8  1               scen_1_2G_LO_validate:
+0086C8  1  AD 17 07     		lda FpgRuleset
+0086CB  1  0A           		asl
+0086CC  1  A8           		tay
+0086CD  1  B9 C6 86     		lda scen_1_2G_LO_rulesets, y
+0086D0  1  85 00        		sta $0
+0086D2  1  B9 C7 86     		lda scen_1_2G_LO_rulesets+1, y
+0086D5  1  85 01        		sta $1
+0086D7  1  6C 00 00     		jmp ($0)
+0086DA  1               
+0086DA  1               scen_1_1_D70_load_area:
+0086DA  1  A9 0A        		lda #$0A
+0086DC  1  8D 1A 07     		sta ScreenEdge_PageLoc
+0086DF  1  A9 0A        		lda #$0A
+0086E1  1  85 6D        		sta Player_PageLoc
+0086E3  1  A9 00        		lda #$00
+0086E5  1  8D 5F 07     		sta WorldNumber
+0086E8  1  A9 00        		lda #$00
+0086EA  1  8D 60 07     		sta AreaNumber
+0086ED  1  A9 00        		lda #$00
+0086EF  1  8D 5C 07     		sta LevelNumber
+0086F2  1  A9 48        		lda #$48
+0086F4  1  8D D7 07     		sta FpgScrollTo
+0086F7  1  60           		rts
+0086F8  1               scen_1_1_D70_Player_CollisionBits:
+0086F8  1  FF 00 00 00  	.byte $FF, $00, $00, $00, $00, $00, $00
+0086FC  1  00 00 00     
+0086FF  1               scen_1_1_D70_Player_X_Speed:
+0086FF  1  28 F8 F8 00  	.byte $28, $F8, $F8, $00, $00, $00, $00
+008703  1  00 00 00     
+008706  1               scen_1_1_D70_Player_State:
+008706  1  01 00 00 00  	.byte $01, $00, $00, $00, $00, $00, $00
+00870A  1  00 00 00     
+00870D  1               scen_1_1_D70_Player_Rel_XPos:
+00870D  1  70 7A 00 00  	.byte $70, $7A, $00, $00, $67, $B7, $00
+008711  1  67 B7 00     
+008714  1               scen_1_1_D70_Player_MovingDir:
+008714  1  01 02 02 00  	.byte $01, $02, $02, $00, $00, $00, $00
+008718  1  00 00 00     
+00871B  1               scen_1_1_D70_PseudoRandomBitReg:
+00871B  1  21 15 57 7D  	.byte $21, $15, $57, $7D, $D3, $28, $8E
+00871F  1  D3 28 8E     
+008722  1               scen_1_1_D70_YPlatformTopYPos:
+008722  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+008726  1  00 00 00     
+008729  1               scen_1_1_D70_SprObject_X_MoveForce:
+008729  1  90 00 00 00  	.byte $90, $00, $00, $00, $00, $00, $00
+00872D  1  00 00 00     
+008730  1               scen_1_1_D70_Player_X_Position:
+008730  1  B9 AB C3 B0  	.byte $B9, $AB, $C3, $B0, $50, $F0, $00
+008734  1  50 F0 00     
+008737  1               scen_1_1_D70_Player_OffscreenBits:
+008737  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+00873B  1  00 00 00     
+00873E  1               scen_1_1_D70_Enemy_ID:
+00873E  1  06 06 00 00  	.byte $06, $06, $00, $00, $00, $00, $00
+008742  1  00 00 00     
+008745  1               scen_1_1_D70_Player_Y_Position:
+008745  1  95 B8 B8 00  	.byte $95, $B8, $B8, $00, $00, $00, $00
+008749  1  00 00 00     
+00874C  1               scen_1_1_D70_Enemy_Flag:
+00874C  1  01 01 00 00  	.byte $01, $01, $00, $00, $00, $00, $00
+008750  1  00 00 00     
+008753  1               scen_1_1_D70_EnemyOffscrBitsMasked:
+008753  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+008757  1  00 00 00     
+00875A  1               scen_1_1_D70_Player_YMF_Dummy:
+00875A  1  38 00 00 00  	.byte $38, $00, $00, $00, $00, $00, $00
+00875E  1  00 00 00     
+008761  1               scen_1_1_D70_YPlatformCenterYPos:
+008761  1  F8 F8 00 00  	.byte $F8, $F8, $00, $00, $00, $00, $00
+008765  1  00 00 00     
+008768  1               scen_1_1_D70_Player_Rel_YPos:
+008768  1  95 B8 00 00  	.byte $95, $B8, $00, $00, $88, $00, $00
+00876C  1  88 00 00     
+00876F  1               scen_1_1_D70_Player_Y_HighPos:
+00876F  1  01 01 01 00  	.byte $01, $01, $01, $00, $00, $00, $00
+008773  1  00 00 00     
+008776  1               scen_1_1_D70_Player_Y_Speed:
+008776  1  03 00 00 00  	.byte $03, $00, $00, $00, $00, $00, $00
+00877A  1  00 00 00     
+00877D  1               scen_1_1_D70_Player_SprAttrib:
+00877D  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+008781  1  00 00 00     
+008784  1               scen_1_1_D70_Player_Y_MoveForce:
+008784  1  38 00 00 00  	.byte $38, $00, $00, $00, $00, $00, $00
+008788  1  00 00 00     
+00878B  1               scen_1_1_D70_PlatformCollisionFlag:
+00878B  1  00 00 00 00  	.byte $00, $00, $00, $00, $00, $00, $00
+00878F  1  00 00 00     
+008792  1               scen_1_1_D70_Player_BoundBoxCtrl:
+008792  1  01 09 09 00  	.byte $01, $09, $09, $00, $00, $00, $00
+008796  1  00 00 00     
+008799  1               scen_1_1_D70_SprObject_PageLoc:
+008799  1  0A 0A 0A 06  	.byte $0A, $0A, $0A, $06, $07, $07, $00
+00879D  1  07 07 00     
+0087A0  1               scen_1_1_D70_BoundingBox_UL_XPos:
+0087A0  1  73 A9 7D B5  	.byte $73, $A9, $7D, $B5, $65, $C6, $6F, $CC, $7D, $C6, $87, $CC, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+0087A4  1  65 C6 6F CC  
+0087A8  1  7D C6 87 CC  
+0087F4  1               scen_1_1_D70_Timers:
+0087F4  1  00 00 12 00  	.byte $00, $00, $12, $00, $0B, $00, $00, $16, $00, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+0087F8  1  0B 00 00 16  
+0087FC  1  00 18 00 00  
+008809  1               
+008809  1               scen_1_1_D70_reset:
+008809  1  A5 02        		lda $2
+00880B  1  18           		clc
+00880C  1  69 91        		adc #$91
+00880E  1  85 E9        		sta EnemyDataLow
+008810  1  A5 03        		lda $3
+008812  1  69 01        		adc #$01
+008814  1  85 EA        		sta EnemyDataHigh
+008816  1  A2 06        		ldx #$06
+008818  1               scen_1_1_D70_init_len7_0:
+008818  1  BD F8 86     		lda scen_1_1_D70_Player_CollisionBits, x
+00881B  1  9D 90 04     		sta Player_CollisionBits, x
+00881E  1  BD FF 86     		lda scen_1_1_D70_Player_X_Speed, x
+008821  1  95 57        		sta Player_X_Speed, x
+008823  1  BD 06 87     		lda scen_1_1_D70_Player_State, x
+008826  1  95 1D        		sta Player_State, x
+008828  1  BD 0D 87     		lda scen_1_1_D70_Player_Rel_XPos, x
+00882B  1  9D AD 03     		sta Player_Rel_XPos, x
+00882E  1  BD 14 87     		lda scen_1_1_D70_Player_MovingDir, x
+008831  1  95 45        		sta Player_MovingDir, x
+008833  1  BD 1B 87     		lda scen_1_1_D70_PseudoRandomBitReg, x
+008836  1  9D A7 07     		sta PseudoRandomBitReg, x
+008839  1  BD 22 87     		lda scen_1_1_D70_YPlatformTopYPos, x
+00883C  1  9D 01 04     		sta YPlatformTopYPos, x
+00883F  1  BD 29 87     		lda scen_1_1_D70_SprObject_X_MoveForce, x
+008842  1  9D 00 04     		sta SprObject_X_MoveForce, x
+008845  1  BD 30 87     		lda scen_1_1_D70_Player_X_Position, x
+008848  1  95 86        		sta Player_X_Position, x
+00884A  1  BD 37 87     		lda scen_1_1_D70_Player_OffscreenBits, x
+00884D  1  9D D0 03     		sta Player_OffscreenBits, x
+008850  1  BD 3E 87     		lda scen_1_1_D70_Enemy_ID, x
+008853  1  95 16        		sta Enemy_ID, x
+008855  1  BD 45 87     		lda scen_1_1_D70_Player_Y_Position, x
+008858  1  95 CE        		sta Player_Y_Position, x
+00885A  1  BD 4C 87     		lda scen_1_1_D70_Enemy_Flag, x
+00885D  1  95 0F        		sta Enemy_Flag, x
+00885F  1  BD 53 87     		lda scen_1_1_D70_EnemyOffscrBitsMasked, x
+008862  1  9D D8 03     		sta EnemyOffscrBitsMasked, x
+008865  1  BD 5A 87     		lda scen_1_1_D70_Player_YMF_Dummy, x
+008868  1  9D 16 04     		sta Player_YMF_Dummy, x
+00886B  1  BD 61 87     		lda scen_1_1_D70_YPlatformCenterYPos, x
+00886E  1  95 58        		sta YPlatformCenterYPos, x
+008870  1  BD 68 87     		lda scen_1_1_D70_Player_Rel_YPos, x
+008873  1  9D B8 03     		sta Player_Rel_YPos, x
+008876  1  BD 6F 87     		lda scen_1_1_D70_Player_Y_HighPos, x
+008879  1  95 B5        		sta Player_Y_HighPos, x
+00887B  1  BD 76 87     		lda scen_1_1_D70_Player_Y_Speed, x
+00887E  1  95 9F        		sta Player_Y_Speed, x
+008880  1  BD 7D 87     		lda scen_1_1_D70_Player_SprAttrib, x
+008883  1  9D C4 03     		sta Player_SprAttrib, x
+008886  1  CA           		dex
+008887  1  10 8F        		bpl scen_1_1_D70_init_len7_0
+008889  1  A2 06        		ldx #$06
+00888B  1               scen_1_1_D70_init_len7_1:
+00888B  1  BD 84 87     		lda scen_1_1_D70_Player_Y_MoveForce, x
+00888E  1  9D 33 04     		sta Player_Y_MoveForce, x
+008891  1  BD 8B 87     		lda scen_1_1_D70_PlatformCollisionFlag, x
+008894  1  9D A2 03     		sta PlatformCollisionFlag, x
+008897  1  BD 92 87     		lda scen_1_1_D70_Player_BoundBoxCtrl, x
+00889A  1  9D 99 04     		sta Player_BoundBoxCtrl, x
+00889D  1  BD 99 87     		lda scen_1_1_D70_SprObject_PageLoc, x
+0088A0  1  95 6D        		sta SprObject_PageLoc, x
+0088A2  1  CA           		dex
+0088A3  1  10 E6        		bpl scen_1_1_D70_init_len7_1
+0088A5  1  A2 53        		ldx #$53
+0088A7  1               scen_1_1_D70_init_len84_0:
+0088A7  1  BD A0 87     		lda scen_1_1_D70_BoundingBox_UL_XPos, x
+0088AA  1  9D AC 04     		sta BoundingBox_UL_XPos, x
+0088AD  1  CA           		dex
+0088AE  1  10 F7        		bpl scen_1_1_D70_init_len84_0
+0088B0  1  A2 14        		ldx #$14
+0088B2  1               scen_1_1_D70_init_len21_0:
+0088B2  1  BD F4 87     		lda scen_1_1_D70_Timers, x
+0088B5  1  9D 80 07     		sta Timers, x
+0088B8  1  CA           		dex
+0088B9  1  10 F7        		bpl scen_1_1_D70_init_len21_0
+0088BB  1  A9 00        		lda #$00
+0088BD  1  8D 3B 07     		sta EnemyObjectPageSel
+0088C0  1  A9 48        		lda #$48
+0088C2  1  8D 1D 07     		sta ScreenRight_X_Pos
+0088C5  1  A9 10        		lda #$10
+0088C7  1  8D 7F 07     		sta IntervalTimerControl
+0088CA  1  A9 00        		lda #$00
+0088CC  1  8D CB 06     		sta EnemyFrenzyBuffer
+0088CF  1  A9 90        		lda #$90
+0088D1  1  8D 0A 07     		sta VerticalForceDown
+0088D4  1  A9 34        		lda #$34
+0088D6  1  8D 05 07     		sta Player_X_MoveForce
+0088D9  1  A9 00        		lda #$00
+0088DB  1  8D 01 07     		sta FrictionAdderHigh
+0088DE  1  A9 D8        		lda #$D8
+0088E0  1  8D 50 04     		sta MaximumLeftSpeed
+0088E3  1  A9 00        		lda #$00
+0088E5  1  8D 56 07     		sta PlayerStatus
+0088E8  1  A9 49        		lda #$49
+0088EA  1  8D 3F 07     		sta HorizontalScroll
+0088ED  1  A9 02        		lda #$02
+0088EF  1  8D FF 06     		sta Player_X_Scroll
+0088F2  1  A9 01        		lda #$01
+0088F4  1  8D 07 07     		sta JumpOrigin_Y_HighPos
+0088F7  1  A9 00        		lda #$00
+0088F9  1  8D 14 07     		sta CrouchingFlag
+0088FC  1  A9 70        		lda #$70
+0088FE  1  8D 55 07     		sta Player_Pos_ForScroll
+008901  1  A9 01        		lda #$01
+008903  1  85 33        		sta PlayerFacingDir
+008905  1  A9 C2        		lda #$C2
+008907  1  85 09        		sta FrameCounter
+008909  1  A9 02        		lda #$02
+00890B  1  8D 75 07     		sta ScrollAmount
+00890E  1  A9 90        		lda #$90
+008910  1  8D 09 07     		sta VerticalForce
+008913  1  A9 B0        		lda #$B0
+008915  1  8D 08 07     		sta JumpOrigin_Y_Position
+008918  1  A9 00        		lda #$00
+00891A  1  8D 47 07     		sta TimerControl
+00891D  1  A9 E4        		lda #$E4
+00891F  1  8D 02 07     		sta FrictionAdderLow
+008922  1  A9 FF        		lda #$FF
+008924  1  8D A0 03     		sta BalPlatformAlignment
+008927  1  A9 00        		lda #$00
+008929  1  8D 68 07     		sta ScrollFractional
+00892C  1  A9 09        		lda #$09
+00892E  1  8D 3D 07     		sta ScrollThirtyTwo
+008931  1  A9 00        		lda #$00
+008933  1  8D 40 07     		sta VerticalScroll
+008936  1  A9 0B        		lda #$0B
+008938  1  8D 3A 07     		sta EnemyObjectPageLoc
+00893B  1  A9 00        		lda #$00
+00893D  1  8D 23 07     		sta ScrollLock
+008940  1  A9 1D        		lda #$1D
+008942  1  8D 39 07     		sta EnemyDataOffset
+008945  1  A9 0B        		lda #$0B
+008947  1  8D 1B 07     		sta ScreenRight_PageLoc
+00894A  1  A9 01        		lda #$01
+00894C  1  8D 54 07     		sta PlayerSize
+00894F  1  A9 49        		lda #$49
+008951  1  8D 1C 07     		sta ScreenLeft_X_Pos
+008954  1  A9 28        		lda #$28
+008956  1  8D 00 07     		sta Player_XSpeedAbsolute
+008959  1  A9 00        		lda #$00
+00895B  1  8D 0D 07     		sta PlayerAnimCtrl
+00895E  1  A9 02        		lda #$02
+008960  1  8D 0C 07     		sta PlayerAnimTimerSet
+008963  1  A9 00        		lda #$00
+008965  1  8D 0B 07     		sta PlayerChangeSizeFlag
+008968  1  A9 00        		lda #$00
+00896A  1  8D 04 07     		sta SwimmingFlag
+00896D  1  A9 28        		lda #$28
+00896F  1  8D 03 07     		sta RunningSpeed
+008972  1  A9 00        		lda #$00
+008974  1  8D A1 03     		sta Platform_X_Scroll
+008977  1  A9 28        		lda #$28
+008979  1  8D 56 04     		sta MaximumRightSpeed
+00897C  1  A9 00        		lda #$00
+00897E  1  8D CD 06     		sta EnemyFrenzyQueue
+008981  1  A9 01        		lda #$01
+008983  1  8D 06 07     		sta DiffToHaltJump
+008986  1  60           		rts
+008987  1               scen_1_1_D70_ruleset0:
+008987  1  A4 09        		ldy FrameCounter
+008989  1  AD FC 06     		lda SavedJoypadBits
+00898C  1  29 C3        		and #$C3
+00898E  1               scen_1_1_D70_ruleset0_rule0:
+00898E  1  C0 1B        		cpy #$1B
+008990  1  D0 12        		bne scen_1_1_D70_ruleset0_rule1
+008992  1  A6 86        		ldx Player_X_Position
+008994  1  E0 95        		cpx #$95
+008996  1  F0 03        		beq scen_1_1_D70_ruleset0_rule0_y
+008998  1  4C 6C 8B     		jmp fpg_failed_pos_x
+00899B  1               scen_1_1_D70_ruleset0_rule0_y:
+00899B  1  A6 CE        		ldx Player_Y_Position
+00899D  1  E0 50        		cpx #$50
+00899F  1  F0 03        		beq scen_1_1_D70_ruleset0_rule1
+0089A1  1  4C 79 8B     		jmp fpg_failed_pos_y
+0089A4  1               scen_1_1_D70_ruleset0_rule1:
+0089A4  1  C0 1B        		cpy #$1B
+0089A6  1  D0 09        		bne scen_1_1_D70_ruleset0_rule2
+0089A8  1  C9 01        		cmp #$01
+0089AA  1  F0 05        		beq scen_1_1_D70_ruleset0_rule2
+0089AC  1  A9 01        		lda #$01
+0089AE  1  4C 86 8B     		jmp fpg_failed_input
+0089B1  1               scen_1_1_D70_ruleset0_rule2:
+0089B1  1  C0 1C        		cpy #$1C
+0089B3  1  D0 0A        		bne scen_1_1_D70_ruleset0_rule3
+0089B5  1  48           		pha
+0089B6  1  AD 61 07     		lda FpgFlags
+0089B9  1  09 20        		ora #$20
+0089BB  1  8D 61 07     		sta FpgFlags
+0089BE  1  68           		pla
+0089BF  1               scen_1_1_D70_ruleset0_rule3:
+0089BF  1  C0 1C        		cpy #$1C
+0089C1  1  30 0D        		bmi scen_1_1_D70_ruleset0_rule5
+0089C3  1  C0 1E        		cpy #$1E
+0089C5  1  10 09        		bpl scen_1_1_D70_ruleset0_rule5
+0089C7  1  C9 41        		cmp #$41
+0089C9  1  F0 05        		beq scen_1_1_D70_ruleset0_rule5
+0089CB  1  A9 41        		lda #$41
+0089CD  1  4C 86 8B     		jmp fpg_failed_input
+0089D0  1               scen_1_1_D70_ruleset0_rule5:
+0089D0  1  C0 1E        		cpy #$1E
+0089D2  1  30 0D        		bmi scen_1_1_D70_ruleset0_rule37
+0089D4  1  C0 3E        		cpy #$3E
+0089D6  1  10 09        		bpl scen_1_1_D70_ruleset0_rule37
+0089D8  1  C9 C1        		cmp #$C1
+0089DA  1  F0 05        		beq scen_1_1_D70_ruleset0_rule37
+0089DC  1  A9 C1        		lda #$C1
+0089DE  1  4C 86 8B     		jmp fpg_failed_input
+0089E1  1               scen_1_1_D70_ruleset0_rule37:
+0089E1  1  C0 6C        		cpy #$6C
+0089E3  1  30 0D        		bmi scen_1_1_D70_ruleset0_rule40
+0089E5  1  C0 6F        		cpy #$6F
+0089E7  1  10 09        		bpl scen_1_1_D70_ruleset0_rule40
+0089E9  1  C9 02        		cmp #$02
+0089EB  1  F0 05        		beq scen_1_1_D70_ruleset0_rule40
+0089ED  1  A9 02        		lda #$02
+0089EF  1  4C 86 8B     		jmp fpg_failed_input
+0089F2  1               scen_1_1_D70_ruleset0_rule40:
+0089F2  1  C0 6F        		cpy #$6F
+0089F4  1  D0 09        		bne scen_1_1_D70_ruleset0_rule41
+0089F6  1  C9 82        		cmp #$82
+0089F8  1  F0 05        		beq scen_1_1_D70_ruleset0_rule41
+0089FA  1  A9 82        		lda #$82
+0089FC  1  4C 86 8B     		jmp fpg_failed_input
+0089FF  1               scen_1_1_D70_ruleset0_rule41:
+0089FF  1  C0 A5        		cpy #$A5
+008A01  1  D0 12        		bne scen_1_1_D70_ruleset0_rule42
+008A03  1  A6 86        		ldx Player_X_Position
+008A05  1  E0 6B        		cpx #$6B
+008A07  1  F0 03        		beq scen_1_1_D70_ruleset0_rule41_y
+008A09  1  4C 6C 8B     		jmp fpg_failed_pos_x
+008A0C  1               scen_1_1_D70_ruleset0_rule41_y:
+008A0C  1  A6 CE        		ldx Player_Y_Position
+008A0E  1  E0 A0        		cpx #$A0
+008A10  1  F0 03        		beq scen_1_1_D70_ruleset0_rule42
+008A12  1  4C 79 8B     		jmp fpg_failed_pos_y
+008A15  1               scen_1_1_D70_ruleset0_rule42:
+008A15  1  C0 A7        		cpy #$A7
+008A17  1  D0 03        		bne scen_1_1_D70_ruleset0_rule43
+008A19  1  4C 9F 8B     		jmp fpg_win
+008A1C  1               scen_1_1_D70_ruleset0_rule43:
+008A1C  1  60           		rts
+008A1D  1               scen_1_1_D70_ruleset1:
+008A1D  1  A4 09        		ldy FrameCounter
+008A1F  1  AD FC 06     		lda SavedJoypadBits
+008A22  1  29 C3        		and #$C3
+008A24  1               scen_1_1_D70_ruleset1_rule0:
+008A24  1  C0 1C        		cpy #$1C
+008A26  1  D0 12        		bne scen_1_1_D70_ruleset1_rule1
+008A28  1  A6 86        		ldx Player_X_Position
+008A2A  1  E0 98        		cpx #$98
+008A2C  1  F0 03        		beq scen_1_1_D70_ruleset1_rule0_y
+008A2E  1  4C 6C 8B     		jmp fpg_failed_pos_x
+008A31  1               scen_1_1_D70_ruleset1_rule0_y:
+008A31  1  A6 CE        		ldx Player_Y_Position
+008A33  1  E0 50        		cpx #$50
+008A35  1  F0 03        		beq scen_1_1_D70_ruleset1_rule1
+008A37  1  4C 79 8B     		jmp fpg_failed_pos_y
+008A3A  1               scen_1_1_D70_ruleset1_rule1:
+008A3A  1  C0 1C        		cpy #$1C
+008A3C  1  D0 09        		bne scen_1_1_D70_ruleset1_rule2
+008A3E  1  C9 01        		cmp #$01
+008A40  1  F0 05        		beq scen_1_1_D70_ruleset1_rule2
+008A42  1  A9 01        		lda #$01
+008A44  1  4C 86 8B     		jmp fpg_failed_input
+008A47  1               scen_1_1_D70_ruleset1_rule2:
+008A47  1  C0 1D        		cpy #$1D
+008A49  1  D0 09        		bne scen_1_1_D70_ruleset1_rule3
+008A4B  1  C9 41        		cmp #$41
+008A4D  1  F0 05        		beq scen_1_1_D70_ruleset1_rule3
+008A4F  1  A9 41        		lda #$41
+008A51  1  4C 86 8B     		jmp fpg_failed_input
+008A54  1               scen_1_1_D70_ruleset1_rule3:
+008A54  1  C0 1E        		cpy #$1E
+008A56  1  30 0D        		bmi scen_1_1_D70_ruleset1_rule35
+008A58  1  C0 3E        		cpy #$3E
+008A5A  1  10 09        		bpl scen_1_1_D70_ruleset1_rule35
+008A5C  1  C9 C1        		cmp #$C1
+008A5E  1  F0 05        		beq scen_1_1_D70_ruleset1_rule35
+008A60  1  A9 C1        		lda #$C1
+008A62  1  4C 86 8B     		jmp fpg_failed_input
+008A65  1               scen_1_1_D70_ruleset1_rule35:
+008A65  1  C0 6C        		cpy #$6C
+008A67  1  30 0D        		bmi scen_1_1_D70_ruleset1_rule38
+008A69  1  C0 6F        		cpy #$6F
+008A6B  1  10 09        		bpl scen_1_1_D70_ruleset1_rule38
+008A6D  1  C9 02        		cmp #$02
+008A6F  1  F0 05        		beq scen_1_1_D70_ruleset1_rule38
+008A71  1  A9 02        		lda #$02
+008A73  1  4C 86 8B     		jmp fpg_failed_input
+008A76  1               scen_1_1_D70_ruleset1_rule38:
+008A76  1  C0 6F        		cpy #$6F
+008A78  1  D0 09        		bne scen_1_1_D70_ruleset1_rule39
+008A7A  1  C9 82        		cmp #$82
+008A7C  1  F0 05        		beq scen_1_1_D70_ruleset1_rule39
+008A7E  1  A9 82        		lda #$82
+008A80  1  4C 86 8B     		jmp fpg_failed_input
+008A83  1               scen_1_1_D70_ruleset1_rule39:
+008A83  1  C0 A5        		cpy #$A5
+008A85  1  D0 12        		bne scen_1_1_D70_ruleset1_rule40
+008A87  1  A6 86        		ldx Player_X_Position
+008A89  1  E0 6B        		cpx #$6B
+008A8B  1  F0 03        		beq scen_1_1_D70_ruleset1_rule39_y
+008A8D  1  4C 6C 8B     		jmp fpg_failed_pos_x
+008A90  1               scen_1_1_D70_ruleset1_rule39_y:
+008A90  1  A6 CE        		ldx Player_Y_Position
+008A92  1  E0 A0        		cpx #$A0
+008A94  1  F0 03        		beq scen_1_1_D70_ruleset1_rule40
+008A96  1  4C 79 8B     		jmp fpg_failed_pos_y
+008A99  1               scen_1_1_D70_ruleset1_rule40:
+008A99  1  C0 A7        		cpy #$A7
+008A9B  1  D0 03        		bne scen_1_1_D70_ruleset1_rule41
+008A9D  1  4C 9F 8B     		jmp fpg_win
+008AA0  1               scen_1_1_D70_ruleset1_rule41:
+008AA0  1  60           		rts
+008AA1  1               scen_1_1_D70_rulesets:
+008AA1  1  87 89        	.word scen_1_1_D70_ruleset0
+008AA3  1  1D 8A        	.word scen_1_1_D70_ruleset1
+008AA5  1               scen_1_1_D70_validate:
+008AA5  1  AD 17 07     		lda FpgRuleset
+008AA8  1  0A           		asl
+008AA9  1  A8           		tay
+008AAA  1  B9 A1 8A     		lda scen_1_1_D70_rulesets, y
+008AAD  1  85 00        		sta $0
+008AAF  1  B9 A2 8A     		lda scen_1_1_D70_rulesets+1, y
+008AB2  1  85 01        		sta $1
+008AB4  1  6C 00 00     		jmp ($0)
+008AB7  1               
+008AB7  1  03           fpg_num_configs: .byte $03
+008AB8  1               fpg_configs:
+008AB8  1  01 28 02 10  		.byte $01, $28, $02, $10, $24, $11, $12, $24 ; 1-2G HI
+008ABC  1  24 11 12 24  
+008AC0  1               fpg_load_area_func:
+008AC0  1  00 80        		.word scen_1_2G_HI_load_area
+008AC2  1               fpg_reset_func:
+008AC2  1  2F 81        		.word scen_1_2G_HI_reset
+008AC4  1               fpg_validate_func:
+008AC4  1  5B 83        		.word scen_1_2G_HI_validate
+008AC6  1               fpg_num_routes:
+008AC6  1  01           		.byte $01
+008AC7  1  00           		.byte 0
+008AC8  1  01 28 02 10  		.byte $01, $28, $02, $10, $24, $15, $18, $24 ; 1-2G LO
+008ACC  1  24 15 18 24  
+008AD0  1  6D 83        		.word scen_1_2G_LO_load_area
+008AD2  1  9C 84        		.word scen_1_2G_LO_reset
+008AD4  1  C8 86        		.word scen_1_2G_LO_validate
+008AD6  1  01           		.byte $01
+008AD7  1  00           		.byte 0
+008AD8  1  01 28 01 24  		.byte $01, $28, $01, $24, $0D, $07, $00, $24 ; 1-1 D70
+008ADC  1  0D 07 00 24  
+008AE0  1  DA 86        		.word scen_1_1_D70_load_area
+008AE2  1  09 88        		.word scen_1_1_D70_reset
+008AE4  1  A5 8A        		.word scen_1_1_D70_validate
+008AE6  1  02           		.byte $02
+008AE7  1  00           		.byte 0
+008AE8  1               .include "scen_exports.asm"
+008AE8  2               	.export ScenLoadArea
+008AE8  2               	.export ScenReset
+008AE8  2               	.export ScenUpdateSelected
+008AE8  2               	.export ScenValidate
+008AE8  2               
+008AE8  2               ;
+008AE8  2               ; Appended to fpg_data.asm
+008AE8  2               ;
+008AE8  2               fpg_offset_to_y:
+008AE8  2  AD 5A 07     		lda FpgSelected
+008AEB  2  0A           		asl
+008AEC  2  0A           		asl
+008AED  2  0A           		asl
+008AEE  2  0A           		asl
+008AEF  2  A8           		tay
+008AF0  2  60           		rts
+008AF1  2               
+008AF1  2               fpg_validate:
+008AF1  2  20 E8 8A     		jsr fpg_offset_to_y
+008AF4  2               fpg_validate_unsafe:
+008AF4  2  B9 C4 8A     		lda fpg_validate_func, y
+008AF7  2  85 00        		sta $0
+008AF9  2  B9 C5 8A     		lda fpg_validate_func+1, y
+008AFC  2  85 01        		sta $1
+008AFE  2  6C 00 00     		jmp ($0)
+008B01  2               
+008B01  2               fpg_load_area:
+008B01  2  20 E8 8A     		jsr fpg_offset_to_y
+008B04  2  B9 C0 8A     		lda fpg_load_area_func, y
+008B07  2  85 00        		sta $0
+008B09  2  B9 C1 8A     		lda fpg_load_area_func+1, y
+008B0C  2  85 01        		sta $1
+008B0E  2  6C 00 00     		jmp ($0)
+008B11  2               
+008B11  2               fpg_reset:
+008B11  2  20 E8 8A     		jsr fpg_offset_to_y
+008B14  2  B9 C2 8A     		lda fpg_reset_func, y
+008B17  2  85 00        		sta $0
+008B19  2  B9 C3 8A     		lda fpg_reset_func+1, y
+008B1C  2  85 01        		sta $1
+008B1E  2  6C 00 00     		jmp ($0)
+008B21  2               
+008B21  2               fpg_update_selected:
+008B21  2  AD 5A 07     		lda FpgSelected
+008B24  2  C9 00        		cmp #0
+008B26  2  30 0D        		bmi fpg_negative_sel
+008B28  2  CD B7 8A     		cmp fpg_num_configs
+008B2B  2  30 0F        		bmi fpg_render_it
+008B2D  2  A9 00        		lda #$0
+008B2F  2  8D 5A 07     		sta FpgSelected
+008B32  2  4C 3C 8B     		jmp fpg_render_it ; beq
+008B35  2               fpg_negative_sel:
+008B35  2  AE B7 8A     		ldx fpg_num_configs
+008B38  2  CA           		dex
+008B39  2  8E 5A 07     		stx FpgSelected
+008B3C  2               fpg_render_it:
+008B3C  2  20 E8 8A     		jsr fpg_offset_to_y
+008B3F  2  A9 08        		lda #8
+008B41  2  85 00        		sta $0
+008B43  2               fpg_copy_more:
+008B43  2  B9 B8 8A     		lda fpg_configs, y
+008B46  2  9D 04 03     		sta VRAM_Buffer1+3, x
+008B49  2  E8           		inx
+008B4A  2  C8           		iny
+008B4B  2  C6 00        		dec $0
+008B4D  2  D0 F4        		bne fpg_copy_more
+008B4F  2  60           		rts
+008B50  2               ;
+008B50  2               ;
+008B50  2               ;
+008B50  2               fpg_check_true_over:
+008B50  2  AD 61 07     		lda FpgFlags
+008B53  2  29 20        		and #$20
+008B55  2  F0 03        		beq fpg_not_locked
+008B57  2  A9 00        		lda #0
+008B59  2  60           		rts
+008B5A  2               fpg_not_locked:
+008B5A  2  AD 5A 07     		lda FpgSelected
+008B5D  2  0A           		asl
+008B5E  2  0A           		asl
+008B5F  2  0A           		asl
+008B60  2  0A           		asl
+008B61  2  A8           		tay
+008B62  2  B9 C6 8A     		lda fpg_num_routes, y
+008B65  2  EE 17 07     		inc FpgRuleset
+008B68  2  CD 17 07     		cmp FpgRuleset
+008B6B  2  60           		rts
+008B6C  2               ;
+008B6C  2               ; On bad x
+008B6C  2               ;
+008B6C  2               fpg_failed_pos_x:
+008B6C  2  20 50 8B     		jsr fpg_check_true_over
+008B6F  2  F0 03        		beq fpg_game_over_x
+008B71  2  4C F4 8A     		jmp fpg_validate_unsafe
+008B74  2               fpg_game_over_x:
+008B74  2  A2 01        		ldx #$01
+008B76  2  4C 93 8B     		jmp fpg_set_death_flag
+008B79  2               ;
+008B79  2               ; On bad y
+008B79  2               ;
+008B79  2               fpg_failed_pos_y:
+008B79  2  20 50 8B     		jsr fpg_check_true_over
+008B7C  2  F0 03        		beq fpg_game_over_y
+008B7E  2  4C F4 8A     		jmp fpg_validate_unsafe
+008B81  2               fpg_game_over_y:
+008B81  2  A2 02        		ldx #$02
+008B83  2  4C 93 8B     		jmp fpg_set_death_flag
+008B86  2               ;
+008B86  2               ; On bad input
+008B86  2               ;
+008B86  2               fpg_failed_input:
+008B86  2  8D D9 07     		sta FpgErrorParam
+008B89  2  20 50 8B     		jsr fpg_check_true_over
+008B8C  2  F0 03        		beq fpg_game_over_input
+008B8E  2  4C F4 8A     		jmp fpg_validate_unsafe
+008B91  2               fpg_game_over_input:
+008B91  2  A2 03        		ldx #$3
+008B93  2               fpg_set_death_flag:
+008B93  2  8E D8 07     		stx FpgError
+008B96  2  AD 61 07     		lda FpgFlags
+008B99  2  09 80        		ora #$80
+008B9B  2  8D 61 07     		sta FpgFlags
+008B9E  2  60           		rts
+008B9F  2               ;
+008B9F  2               ; Victory!
+008B9F  2               ;
+008B9F  2               fpg_win:
+008B9F  2  A9 04        		lda #VictoryMusic
+008BA1  2  85 FC        		sta EventMusicQueue
+008BA3  2  A2 04        		ldx #$04
+008BA5  2  4C 93 8B     		jmp fpg_set_death_flag
+008BA8  2               
+008BA8  2               ScenLoadArea:
+008BA8  2  20 01 8B     	jsr fpg_load_area
+008BAB  2  4C 08 FF     	jmp ReturnBank
+008BAE  2               
+008BAE  2               ScenReset:
+008BAE  2  20 11 8B     	jsr fpg_reset
+008BB1  2  4C 08 FF     	jmp ReturnBank
+008BB4  2               
+008BB4  2               ScenUpdateSelected:
+008BB4  2  20 21 8B     	jsr fpg_update_selected
+008BB7  2  4C 08 FF     	jmp ReturnBank
+008BBA  2               
+008BBA  2               ScenValidate:
+008BBA  2  20 F1 8A     	jsr fpg_validate
+008BBD  2  4C 08 FF     	jmp ReturnBank
+008BC0  2               
+008BC0  2               Start:
+008BC0  2               NonMaskableInterrupt:
+008BC0  2               
+008BC0  2  EA EA EA EA  scenarios_callgate
+008BC4  2  EA EA EA EA  
+008BC8  2  EA EA EA EA  
+00FE20  2  EA EA EA EA  control_bank
+00FE24  2  EA EA EA EA  
+00FE28  2  EA EA EA EA  
+010000  2               
+010000  2               
+010000  1               

@@ -1,0 +1,4 @@
+build/original.o:	org/original.asm inc/shared.inc inc/org.inc inc/mario.inc inc/macros.inc inc/wram.inc inc/text.inc inc/utils.inc inc/div10.inc
+
+org/original.asm inc/shared.inc inc/org.inc inc/mario.inc inc/macros.inc inc/wram.inc inc/text.inc inc/utils.inc inc/div10.inc:
+

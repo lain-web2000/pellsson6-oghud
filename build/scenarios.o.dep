@@ -1,0 +1,4 @@
+build/scenarios.o:	scen/scenarios.asm inc/org.inc inc/mario.inc inc/shared.inc inc/macros.inc inc/div10.inc
+
+scen/scenarios.asm inc/org.inc inc/mario.inc inc/shared.inc inc/macros.inc inc/div10.inc:
+
